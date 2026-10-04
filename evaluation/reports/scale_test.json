@@ -1,0 +1,529 @@
+{
+ "steps": [
+  {
+   "size": 5000,
+   "growth": {
+    "added": 0
+   },
+   "tts": {
+    "parent_asin": "TTS8B67AEC603",
+    "write_ack_ms": 12.3,
+    "searchable_lexical_ms": 199.5,
+    "searchable_dense_ms": 249.1,
+    "indexer_record": "1791036155.361843|1|1791036155.25636",
+    "cleaned_up": true
+   },
+   "latency": [
+    {
+     "mode": "mosaic",
+     "concurrency": 1,
+     "throughput_rps": 13.05,
+     "p50": 77.4,
+     "p95": 109.4,
+     "p99": 131.9,
+     "mean": 76.4,
+     "max": 178.7,
+     "error_rate": 0.0,
+     "retrieval_p50": 55.5,
+     "dense_ann_p50": 38.9,
+     "bm25_p50": 2.8
+    },
+    {
+     "mode": "mosaic",
+     "concurrency": 4,
+     "throughput_rps": 20.62,
+     "p50": 196.7,
+     "p95": 272.7,
+     "p99": 312.2,
+     "mean": 193.3,
+     "max": 373.4,
+     "error_rate": 0.0,
+     "retrieval_p50": 145.1,
+     "dense_ann_p50": 75.4,
+     "bm25_p50": 3.1
+    },
+    {
+     "mode": "hybrid",
+     "concurrency": 1,
+     "throughput_rps": 18.56,
+     "p50": 52.3,
+     "p95": 64.7,
+     "p99": 95.4,
+     "mean": 53.7,
+     "max": 162.3,
+     "error_rate": 0.0,
+     "retrieval_p50": 35.4,
+     "dense_ann_p50": 27.3,
+     "bm25_p50": 0.1
+    },
+    {
+     "mode": "hybrid",
+     "concurrency": 4,
+     "throughput_rps": 29.04,
+     "p50": 135.4,
+     "p95": 188.8,
+     "p99": 214.5,
+     "mean": 137.3,
+     "max": 307.9,
+     "error_rate": 0.0,
+     "retrieval_p50": 99.3,
+     "dense_ann_p50": 52.6,
+     "bm25_p50": 0.0
+    }
+   ],
+   "quality": {
+    "BM25": {
+     "P@5": 0.3417,
+     "P@10": 0.3458,
+     "R@10": 0.0466,
+     "NDCG@10": 0.3061,
+     "MRR": 0.395,
+     "MAP@10": 0.309,
+     "HitRate@10": 0.4667,
+     "ConstraintSat@10": 0.3608,
+     "queries": 120,
+     "mean_latency_ms": 32.5833
+    },
+    "Dense": {
+     "P@5": 0.4033,
+     "P@10": 0.3775,
+     "R@10": 0.0446,
+     "NDCG@10": 0.3314,
+     "MRR": 0.5528,
+     "MAP@10": 0.2985,
+     "HitRate@10": 0.75,
+     "ConstraintSat@10": 0.4375,
+     "queries": 120,
+     "mean_latency_ms": 125.8067
+    },
+    "Hybrid": {
+     "P@5": 0.4983,
+     "P@10": 0.4708,
+     "R@10": 0.0589,
+     "NDCG@10": 0.4119,
+     "MRR": 0.5881,
+     "MAP@10": 0.3967,
+     "HitRate@10": 0.7833,
+     "ConstraintSat@10": 0.5208,
+     "queries": 120,
+     "mean_latency_ms": 129.8692
+    },
+    "MOSAIC": {
+     "P@5": 0.965,
+     "P@10": 0.9542,
+     "R@10": 0.174,
+     "NDCG@10": 0.9158,
+     "MRR": 0.9681,
+     "MAP@10": 0.9434,
+     "HitRate@10": 0.9833,
+     "ConstraintSat@10": 0.9833,
+     "queries": 120,
+     "mean_latency_ms": 189.185
+    }
+   },
+   "memory_mb": {
+    "retrieval": 222.5,
+    "qdrant": 123.5,
+    "postgres": 236.5,
+    "redis": 29.4
+   },
+   "measured_at": "2026-10-03 14:03:50"
+  },
+  {
+   "size": 20000,
+   "growth": {
+    "added": 15000,
+    "write_s": 17.6,
+    "fully_indexed_s": 355.1,
+    "ingest_products_per_s": 42.2
+   },
+   "tts": {
+    "parent_asin": "TTSA2EEC77A0D",
+    "write_ack_ms": 11.7,
+    "searchable_lexical_ms": 260.0,
+    "searchable_dense_ms": 318.5,
+    "indexer_record": "1791036586.913324|1|1791036586.8181362",
+    "cleaned_up": true
+   },
+   "latency": [
+    {
+     "mode": "mosaic",
+     "concurrency": 1,
+     "throughput_rps": 8.97,
+     "p50": 108.5,
+     "p95": 134.8,
+     "p99": 162.3,
+     "mean": 111.2,
+     "max": 308.4,
+     "error_rate": 0.0,
+     "retrieval_p50": 83.0,
+     "dense_ann_p50": 44.7,
+     "bm25_p50": 11.4
+    },
+    {
+     "mode": "mosaic",
+     "concurrency": 4,
+     "throughput_rps": 15.09,
+     "p50": 259.8,
+     "p95": 343.8,
+     "p99": 461.3,
+     "mean": 263.8,
+     "max": 509.2,
+     "error_rate": 0.0,
+     "retrieval_p50": 206.0,
+     "dense_ann_p50": 93.2,
+     "bm25_p50": 11.4
+    },
+    {
+     "mode": "hybrid",
+     "concurrency": 1,
+     "throughput_rps": 16.4,
+     "p50": 59.0,
+     "p95": 81.5,
+     "p99": 100.3,
+     "mean": 60.7,
+     "max": 113.2,
+     "error_rate": 0.0,
+     "retrieval_p50": 39.4,
+     "dense_ann_p50": 28.8,
+     "bm25_p50": 0.8
+    },
+    {
+     "mode": "hybrid",
+     "concurrency": 4,
+     "throughput_rps": 26.33,
+     "p50": 145.6,
+     "p95": 214.1,
+     "p99": 272.2,
+     "mean": 151.6,
+     "max": 393.5,
+     "error_rate": 0.0,
+     "retrieval_p50": 107.0,
+     "dense_ann_p50": 58.1,
+     "bm25_p50": 0.0
+    }
+   ],
+   "quality": {
+    "BM25": {
+     "P@5": 0.36,
+     "P@10": 0.3575,
+     "R@10": 0.0124,
+     "NDCG@10": 0.3226,
+     "MRR": 0.3862,
+     "MAP@10": 0.3208,
+     "HitRate@10": 0.475,
+     "ConstraintSat@10": 0.3692,
+     "queries": 120,
+     "mean_latency_ms": 41.3725
+    },
+    "Dense": {
+     "P@5": 0.4283,
+     "P@10": 0.4017,
+     "R@10": 0.0132,
+     "NDCG@10": 0.3325,
+     "MRR": 0.5313,
+     "MAP@10": 0.3282,
+     "HitRate@10": 0.7167,
+     "ConstraintSat@10": 0.4483,
+     "queries": 120,
+     "mean_latency_ms": 135.3692
+    },
+    "Hybrid": {
+     "P@5": 0.4967,
+     "P@10": 0.4908,
+     "R@10": 0.0166,
+     "NDCG@10": 0.407,
+     "MRR": 0.5533,
+     "MAP@10": 0.4168,
+     "HitRate@10": 0.7667,
+     "ConstraintSat@10": 0.5283,
+     "queries": 120,
+     "mean_latency_ms": 139.265
+    },
+    "MOSAIC": {
+     "P@5": 0.97,
+     "P@10": 0.9683,
+     "R@10": 0.0456,
+     "NDCG@10": 0.9214,
+     "MRR": 0.9729,
+     "MAP@10": 0.9627,
+     "HitRate@10": 0.9833,
+     "ConstraintSat@10": 0.9833,
+     "queries": 120,
+     "mean_latency_ms": 272.8033
+    }
+   },
+   "memory_mb": {
+    "retrieval": 322.3,
+    "qdrant": 208.0,
+    "postgres": 381.8,
+    "redis": 52.3
+   },
+   "measured_at": "2026-10-03 14:11:06"
+  },
+  {
+   "size": 50000,
+   "growth": {
+    "added": 30000,
+    "write_s": 40.2,
+    "fully_indexed_s": 762.5,
+    "ingest_products_per_s": 39.3
+   },
+   "tts": {
+    "parent_asin": "TTSB2455337B1",
+    "write_ack_ms": 9.1,
+    "searchable_lexical_ms": 297.0,
+    "searchable_dense_ms": 191.1,
+    "indexer_record": "1791037430.1560237|1|1791037430.0542638",
+    "cleaned_up": true
+   },
+   "latency": [
+    {
+     "mode": "mosaic",
+     "concurrency": 1,
+     "throughput_rps": 7.46,
+     "p50": 131.9,
+     "p95": 176.0,
+     "p99": 199.4,
+     "mean": 133.8,
+     "max": 251.1,
+     "error_rate": 0.0,
+     "retrieval_p50": 103.4,
+     "dense_ann_p50": 46.3,
+     "bm25_p50": 28.2
+    },
+    {
+     "mode": "mosaic",
+     "concurrency": 4,
+     "throughput_rps": 11.13,
+     "p50": 349.7,
+     "p95": 493.8,
+     "p99": 719.6,
+     "mean": 357.8,
+     "max": 751.6,
+     "error_rate": 0.0,
+     "retrieval_p50": 278.9,
+     "dense_ann_p50": 112.2,
+     "bm25_p50": 27.7
+    },
+    {
+     "mode": "hybrid",
+     "concurrency": 1,
+     "throughput_rps": 15.31,
+     "p50": 57.3,
+     "p95": 104.1,
+     "p99": 118.1,
+     "mean": 65.1,
+     "max": 123.6,
+     "error_rate": 0.0,
+     "retrieval_p50": 39.5,
+     "dense_ann_p50": 28.7,
+     "bm25_p50": 1.6
+    },
+    {
+     "mode": "hybrid",
+     "concurrency": 4,
+     "throughput_rps": 22.93,
+     "p50": 171.8,
+     "p95": 247.3,
+     "p99": 374.1,
+     "mean": 173.8,
+     "max": 515.3,
+     "error_rate": 0.0,
+     "retrieval_p50": 130.4,
+     "dense_ann_p50": 75.4,
+     "bm25_p50": 0.0
+    }
+   ],
+   "quality": {
+    "BM25": {
+     "P@5": 0.3383,
+     "P@10": 0.3392,
+     "R@10": 0.0046,
+     "NDCG@10": 0.3069,
+     "MRR": 0.3688,
+     "MAP@10": 0.3085,
+     "HitRate@10": 0.4583,
+     "ConstraintSat@10": 0.3583,
+     "queries": 120,
+     "mean_latency_ms": 54.835
+    },
+    "Dense": {
+     "P@5": 0.4467,
+     "P@10": 0.4475,
+     "R@10": 0.0055,
+     "NDCG@10": 0.364,
+     "MRR": 0.5405,
+     "MAP@10": 0.3782,
+     "HitRate@10": 0.7417,
+     "ConstraintSat@10": 0.485,
+     "queries": 120,
+     "mean_latency_ms": 148.3492
+    },
+    "Hybrid": {
+     "P@5": 0.4883,
+     "P@10": 0.4992,
+     "R@10": 0.0063,
+     "NDCG@10": 0.416,
+     "MRR": 0.5628,
+     "MAP@10": 0.4295,
+     "HitRate@10": 0.7833,
+     "ConstraintSat@10": 0.5317,
+     "queries": 120,
+     "mean_latency_ms": 178.56
+    },
+    "MOSAIC": {
+     "P@5": 0.9733,
+     "P@10": 0.9708,
+     "R@10": 0.0184,
+     "NDCG@10": 0.9475,
+     "MRR": 0.9792,
+     "MAP@10": 0.9665,
+     "HitRate@10": 0.9833,
+     "ConstraintSat@10": 0.9833,
+     "queries": 120,
+     "mean_latency_ms": 345.0242
+    }
+   },
+   "memory_mb": {
+    "retrieval": 568.9,
+    "qdrant": 342.3,
+    "postgres": 414.6,
+    "redis": 101.2
+   },
+   "measured_at": "2026-10-03 14:25:14"
+  },
+  {
+   "size": 100000,
+   "growth": {
+    "added": 50000,
+    "write_s": 80.9,
+    "fully_indexed_s": 1825.4,
+    "ingest_products_per_s": 27.4
+   },
+   "tts": {
+    "parent_asin": "TTS010C52EF22",
+    "write_ack_ms": 23.9,
+    "searchable_lexical_ms": 537.9,
+    "searchable_dense_ms": 396.1,
+    "indexer_record": "1791039342.9272485|1|1791039342.78149",
+    "cleaned_up": true
+   },
+   "latency": [
+    {
+     "mode": "mosaic",
+     "concurrency": 1,
+     "throughput_rps": 5.48,
+     "p50": 175.8,
+     "p95": 248.0,
+     "p99": 315.4,
+     "mean": 182.3,
+     "max": 456.1,
+     "error_rate": 0.0,
+     "retrieval_p50": 146.2,
+     "dense_ann_p50": 48.3,
+     "bm25_p50": 65.0
+    },
+    {
+     "mode": "mosaic",
+     "concurrency": 4,
+     "throughput_rps": 8.77,
+     "p50": 447.5,
+     "p95": 564.9,
+     "p99": 637.3,
+     "mean": 454.7,
+     "max": 648.5,
+     "error_rate": 0.0,
+     "retrieval_p50": 392.4,
+     "dense_ann_p50": 147.2,
+     "bm25_p50": 51.6
+    },
+    {
+     "mode": "hybrid",
+     "concurrency": 1,
+     "throughput_rps": 12.36,
+     "p50": 60.6,
+     "p95": 175.8,
+     "p99": 186.9,
+     "mean": 80.7,
+     "max": 190.8,
+     "error_rate": 0.0,
+     "retrieval_p50": 42.3,
+     "dense_ann_p50": 30.4,
+     "bm25_p50": 0.0
+    },
+    {
+     "mode": "hybrid",
+     "concurrency": 4,
+     "throughput_rps": 18.7,
+     "p50": 206.4,
+     "p95": 333.9,
+     "p99": 394.2,
+     "mean": 213.5,
+     "max": 444.0,
+     "error_rate": 0.0,
+     "retrieval_p50": 160.7,
+     "dense_ann_p50": 84.2,
+     "bm25_p50": 0.0
+    }
+   ],
+   "quality": {
+    "BM25": {
+     "P@5": 0.3333,
+     "P@10": 0.3417,
+     "R@10": 0.0022,
+     "NDCG@10": 0.3053,
+     "MRR": 0.3627,
+     "MAP@10": 0.3135,
+     "HitRate@10": 0.4417,
+     "ConstraintSat@10": 0.3583,
+     "queries": 120,
+     "mean_latency_ms": 86.7283
+    },
+    "Dense": {
+     "P@5": 0.46,
+     "P@10": 0.4533,
+     "R@10": 0.0028,
+     "NDCG@10": 0.3756,
+     "MRR": 0.5669,
+     "MAP@10": 0.391,
+     "HitRate@10": 0.7,
+     "ConstraintSat@10": 0.4875,
+     "queries": 120,
+     "mean_latency_ms": 156.115
+    },
+    "Hybrid": {
+     "P@5": 0.505,
+     "P@10": 0.4933,
+     "R@10": 0.0031,
+     "NDCG@10": 0.4181,
+     "MRR": 0.5836,
+     "MAP@10": 0.4322,
+     "HitRate@10": 0.7583,
+     "ConstraintSat@10": 0.5292,
+     "queries": 120,
+     "mean_latency_ms": 212.4525
+    },
+    "MOSAIC": {
+     "P@5": 0.9717,
+     "P@10": 0.9717,
+     "R@10": 0.0093,
+     "NDCG@10": 0.9506,
+     "MRR": 0.9771,
+     "MAP@10": 0.9676,
+     "HitRate@10": 0.9833,
+     "ConstraintSat@10": 0.9833,
+     "queries": 120,
+     "mean_latency_ms": 453.255
+    }
+   },
+   "memory_mb": {
+    "retrieval": 976.7,
+    "qdrant": 563.0,
+    "postgres": 361.8,
+    "redis": 182.7
+   },
+   "measured_at": "2026-10-03 14:57:15"
+  }
+ ]
+}

@@ -1,0 +1,871 @@
+{
+ "meta": {
+  "generated": "2026-10-03 13:58:13",
+  "catalogue_size": 5000,
+  "host": "x86_64 \u00b7 2 vCPU (all services + Postgres/Redis/Qdrant on the same host)",
+  "duration": 20.0,
+  "n_queries": 120
+ },
+ "results": [
+  {
+   "concurrency": 1,
+   "mode": "mosaic",
+   "cache": false,
+   "requests": 253,
+   "duration_s": 20.0,
+   "throughput_rps": 12.66,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 80.9,
+    "p95": 110.9,
+    "p99": 129.7,
+    "mean": 78.7,
+    "max": 196.3
+   },
+   "components_ms": {
+    "embedding": {
+     "p50": 5.6,
+     "p95": 7.0,
+     "p99": 8.4
+    },
+    "intent": {
+     "p50": 3.1,
+     "p95": 4.0,
+     "p99": 4.6
+    },
+    "ranking": {
+     "p50": 9.4,
+     "p95": 14.3,
+     "p99": 17.0
+    },
+    "ranking.constraints": {
+     "p50": 0.1,
+     "p95": 0.1,
+     "p99": 0.1
+    },
+    "ranking.explain": {
+     "p50": 0.2,
+     "p95": 0.5,
+     "p99": 0.7
+    },
+    "ranking.fusion": {
+     "p50": 0.5,
+     "p95": 1.0,
+     "p99": 1.3
+    },
+    "ranking.signals": {
+     "p50": 0.3,
+     "p95": 0.8,
+     "p99": 1.1
+    },
+    "retrieval": {
+     "p50": 57.9,
+     "p95": 82.9,
+     "p99": 102.8
+    },
+    "retrieval.bm25": {
+     "p50": 3.1,
+     "p95": 11.1,
+     "p99": 12.6
+    },
+    "retrieval.dense_ann": {
+     "p50": 40.9,
+     "p95": 48.3,
+     "p99": 58.4
+    },
+    "retrieval.fusion": {
+     "p50": 0.7,
+     "p95": 1.1,
+     "p99": 1.4
+    },
+    "retrieval.signal_completion": {
+     "p50": 4.6,
+     "p95": 20.0,
+     "p99": 23.6
+    },
+    "total": {
+     "p50": 77.7,
+     "p95": 107.4,
+     "p99": 126.2
+    }
+   }
+  },
+  {
+   "concurrency": 4,
+   "mode": "mosaic",
+   "cache": false,
+   "requests": 391,
+   "duration_s": 20.1,
+   "throughput_rps": 19.48,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 205.3,
+    "p95": 285.5,
+    "p99": 326.6,
+    "mean": 204.7,
+    "max": 347.0
+   },
+   "components_ms": {
+    "embedding": {
+     "p50": 13.5,
+     "p95": 26.1,
+     "p99": 34.9
+    },
+    "intent": {
+     "p50": 6.1,
+     "p95": 14.6,
+     "p99": 22.4
+    },
+    "ranking": {
+     "p50": 18.6,
+     "p95": 36.7,
+     "p99": 59.7
+    },
+    "ranking.constraints": {
+     "p50": 0.1,
+     "p95": 0.1,
+     "p99": 0.8
+    },
+    "ranking.explain": {
+     "p50": 0.2,
+     "p95": 0.5,
+     "p99": 4.4
+    },
+    "ranking.fusion": {
+     "p50": 0.5,
+     "p95": 2.6,
+     "p99": 6.6
+    },
+    "ranking.signals": {
+     "p50": 0.4,
+     "p95": 2.9,
+     "p99": 5.3
+    },
+    "retrieval": {
+     "p50": 155.2,
+     "p95": 216.6,
+     "p99": 267.8
+    },
+    "retrieval.bm25": {
+     "p50": 3.1,
+     "p95": 14.7,
+     "p99": 20.8
+    },
+    "retrieval.dense_ann": {
+     "p50": 79.2,
+     "p95": 125.5,
+     "p99": 148.5
+    },
+    "retrieval.fusion": {
+     "p50": 0.8,
+     "p95": 2.1,
+     "p99": 4.0
+    },
+    "retrieval.signal_completion": {
+     "p50": 24.1,
+     "p95": 67.7,
+     "p99": 79.7
+    },
+    "total": {
+     "p50": 195.5,
+     "p95": 276.9,
+     "p99": 319.9
+    }
+   }
+  },
+  {
+   "concurrency": 8,
+   "mode": "mosaic",
+   "cache": false,
+   "requests": 443,
+   "duration_s": 20.2,
+   "throughput_rps": 21.94,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 365.9,
+    "p95": 503.7,
+    "p99": 615.0,
+    "mean": 363.3,
+    "max": 668.6
+   },
+   "components_ms": {
+    "embedding": {
+     "p50": 16.9,
+     "p95": 43.4,
+     "p99": 59.4
+    },
+    "intent": {
+     "p50": 7.8,
+     "p95": 26.7,
+     "p99": 39.1
+    },
+    "ranking": {
+     "p50": 28.4,
+     "p95": 60.9,
+     "p99": 81.4
+    },
+    "ranking.constraints": {
+     "p50": 0.0,
+     "p95": 0.1,
+     "p99": 0.2
+    },
+    "ranking.explain": {
+     "p50": 0.2,
+     "p95": 2.2,
+     "p99": 6.7
+    },
+    "ranking.fusion": {
+     "p50": 0.5,
+     "p95": 4.5,
+     "p99": 7.5
+    },
+    "ranking.signals": {
+     "p50": 0.4,
+     "p95": 3.9,
+     "p99": 7.1
+    },
+    "retrieval": {
+     "p50": 289.4,
+     "p95": 409.9,
+     "p99": 514.1
+    },
+    "retrieval.bm25": {
+     "p50": 2.6,
+     "p95": 17.0,
+     "p99": 26.0
+    },
+    "retrieval.dense_ann": {
+     "p50": 139.8,
+     "p95": 214.0,
+     "p99": 297.6
+    },
+    "retrieval.fusion": {
+     "p50": 0.7,
+     "p95": 2.1,
+     "p99": 8.0
+    },
+    "retrieval.signal_completion": {
+     "p50": 43.7,
+     "p95": 121.9,
+     "p99": 187.8
+    },
+    "total": {
+     "p50": 353.1,
+     "p95": 486.2,
+     "p99": 594.0
+    }
+   }
+  },
+  {
+   "concurrency": 16,
+   "mode": "mosaic",
+   "cache": false,
+   "requests": 433,
+   "duration_s": 20.4,
+   "throughput_rps": 21.21,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 771.8,
+    "p95": 1031.5,
+    "p99": 1097.8,
+    "mean": 749.8,
+    "max": 1165.0
+   },
+   "components_ms": {
+    "embedding": {
+     "p50": 28.8,
+     "p95": 127.6,
+     "p99": 169.6
+    },
+    "intent": {
+     "p50": 12.1,
+     "p95": 68.3,
+     "p99": 121.7
+    },
+    "ranking": {
+     "p50": 43.6,
+     "p95": 123.7,
+     "p99": 182.2
+    },
+    "ranking.constraints": {
+     "p50": 0.1,
+     "p95": 0.1,
+     "p99": 1.6
+    },
+    "ranking.explain": {
+     "p50": 0.2,
+     "p95": 2.9,
+     "p99": 6.3
+    },
+    "ranking.fusion": {
+     "p50": 0.6,
+     "p95": 4.8,
+     "p99": 9.4
+    },
+    "ranking.signals": {
+     "p50": 0.4,
+     "p95": 4.9,
+     "p99": 9.2
+    },
+    "retrieval": {
+     "p50": 632.1,
+     "p95": 820.6,
+     "p99": 909.2
+    },
+    "retrieval.bm25": {
+     "p50": 2.7,
+     "p95": 17.9,
+     "p99": 30.1
+    },
+    "retrieval.dense_ann": {
+     "p50": 305.3,
+     "p95": 428.5,
+     "p99": 533.1
+    },
+    "retrieval.fusion": {
+     "p50": 0.7,
+     "p95": 3.8,
+     "p99": 9.5
+    },
+    "retrieval.signal_completion": {
+     "p50": 100.0,
+     "p95": 236.3,
+     "p99": 305.8
+    },
+    "total": {
+     "p50": 755.5,
+     "p95": 1004.0,
+     "p99": 1051.9
+    }
+   }
+  },
+  {
+   "concurrency": 1,
+   "mode": "hybrid",
+   "cache": false,
+   "requests": 372,
+   "duration_s": 20.0,
+   "throughput_rps": 18.59,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 52.2,
+    "p95": 63.1,
+    "p99": 81.3,
+    "mean": 53.6,
+    "max": 162.0
+   },
+   "components_ms": {
+    "embedding": {
+     "p50": 3.6,
+     "p95": 4.4,
+     "p99": 4.8
+    },
+    "ranking": {
+     "p50": 8.9,
+     "p95": 12.6,
+     "p99": 34.4
+    },
+    "ranking.constraints": {
+     "p50": 0.0,
+     "p95": 0.1,
+     "p99": 0.1
+    },
+    "ranking.explain": {
+     "p50": 0.1,
+     "p95": 0.2,
+     "p99": 0.2
+    },
+    "ranking.signals": {
+     "p50": 0.1,
+     "p95": 0.2,
+     "p99": 0.3
+    },
+    "retrieval": {
+     "p50": 35.4,
+     "p95": 41.4,
+     "p99": 51.2
+    },
+    "retrieval.bm25": {
+     "p50": 0.3,
+     "p95": 4.0,
+     "p99": 4.7
+    },
+    "retrieval.dense_ann": {
+     "p50": 27.3,
+     "p95": 31.2,
+     "p99": 35.7
+    },
+    "retrieval.fusion": {
+     "p50": 0.8,
+     "p95": 1.3,
+     "p99": 1.7
+    },
+    "total": {
+     "p50": 49.1,
+     "p95": 59.8,
+     "p99": 78.4
+    }
+   }
+  },
+  {
+   "concurrency": 4,
+   "mode": "hybrid",
+   "cache": false,
+   "requests": 586,
+   "duration_s": 20.1,
+   "throughput_rps": 29.21,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 132.3,
+    "p95": 185.8,
+    "p99": 234.3,
+    "mean": 136.5,
+    "max": 266.3
+   },
+   "components_ms": {
+    "embedding": {
+     "p50": 6.4,
+     "p95": 14.3,
+     "p99": 18.7
+    },
+    "ranking": {
+     "p50": 20.3,
+     "p95": 37.3,
+     "p99": 63.8
+    },
+    "ranking.constraints": {
+     "p50": 0.0,
+     "p95": 0.1,
+     "p99": 0.1
+    },
+    "ranking.explain": {
+     "p50": 0.1,
+     "p95": 0.2,
+     "p99": 2.2
+    },
+    "ranking.signals": {
+     "p50": 0.1,
+     "p95": 0.2,
+     "p99": 2.8
+    },
+    "retrieval": {
+     "p50": 97.8,
+     "p95": 132.4,
+     "p99": 186.7
+    },
+    "retrieval.bm25": {
+     "p50": 0.0,
+     "p95": 4.1,
+     "p99": 6.9
+    },
+    "retrieval.dense_ann": {
+     "p50": 54.9,
+     "p95": 88.6,
+     "p99": 103.1
+    },
+    "retrieval.fusion": {
+     "p50": 0.9,
+     "p95": 1.8,
+     "p99": 4.0
+    },
+    "total": {
+     "p50": 126.1,
+     "p95": 176.3,
+     "p99": 229.7
+    }
+   }
+  },
+  {
+   "concurrency": 8,
+   "mode": "hybrid",
+   "cache": false,
+   "requests": 607,
+   "duration_s": 20.3,
+   "throughput_rps": 29.96,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 264.4,
+    "p95": 377.4,
+    "p99": 440.8,
+    "mean": 266.0,
+    "max": 504.5
+   },
+   "components_ms": {
+    "embedding": {
+     "p50": 10.4,
+     "p95": 33.3,
+     "p99": 45.3
+    },
+    "ranking": {
+     "p50": 39.8,
+     "p95": 80.6,
+     "p99": 99.2
+    },
+    "ranking.constraints": {
+     "p50": 0.0,
+     "p95": 0.1,
+     "p99": 0.1
+    },
+    "ranking.explain": {
+     "p50": 0.1,
+     "p95": 0.3,
+     "p99": 4.1
+    },
+    "ranking.signals": {
+     "p50": 0.1,
+     "p95": 0.2,
+     "p99": 4.1
+    },
+    "retrieval": {
+     "p50": 198.9,
+     "p95": 272.8,
+     "p99": 357.8
+    },
+    "retrieval.bm25": {
+     "p50": 0.3,
+     "p95": 4.5,
+     "p99": 7.7
+    },
+    "retrieval.dense_ann": {
+     "p50": 106.8,
+     "p95": 178.1,
+     "p99": 211.9
+    },
+    "retrieval.fusion": {
+     "p50": 0.9,
+     "p95": 2.0,
+     "p99": 5.5
+    },
+    "total": {
+     "p50": 252.2,
+     "p95": 356.6,
+     "p99": 428.1
+    }
+   }
+  },
+  {
+   "concurrency": 16,
+   "mode": "hybrid",
+   "cache": false,
+   "requests": 633,
+   "duration_s": 20.5,
+   "throughput_rps": 30.91,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 504.3,
+    "p95": 694.7,
+    "p99": 798.3,
+    "mean": 514.5,
+    "max": 857.2
+   },
+   "components_ms": {
+    "embedding": {
+     "p50": 15.9,
+     "p95": 57.7,
+     "p99": 88.3
+    },
+    "ranking": {
+     "p50": 78.9,
+     "p95": 146.3,
+     "p99": 194.3
+    },
+    "ranking.constraints": {
+     "p50": 0.0,
+     "p95": 0.1,
+     "p99": 0.2
+    },
+    "ranking.explain": {
+     "p50": 0.1,
+     "p95": 0.2,
+     "p99": 3.9
+    },
+    "ranking.signals": {
+     "p50": 0.1,
+     "p95": 0.2,
+     "p99": 2.9
+    },
+    "retrieval": {
+     "p50": 388.0,
+     "p95": 518.2,
+     "p99": 572.2
+    },
+    "retrieval.bm25": {
+     "p50": 0.2,
+     "p95": 3.2,
+     "p99": 7.0
+    },
+    "retrieval.dense_ann": {
+     "p50": 222.4,
+     "p95": 328.5,
+     "p99": 366.6
+    },
+    "retrieval.fusion": {
+     "p50": 0.8,
+     "p95": 1.7,
+     "p99": 5.6
+    },
+    "total": {
+     "p50": 485.3,
+     "p95": 663.4,
+     "p99": 758.2
+    }
+   }
+  },
+  {
+   "concurrency": 1,
+   "mode": "bm25",
+   "cache": false,
+   "requests": 1564,
+   "duration_s": 20.0,
+   "throughput_rps": 78.31,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 8.8,
+    "p95": 20.7,
+    "p99": 41.9,
+    "mean": 12.7,
+    "max": 125.6
+   },
+   "components_ms": {
+    "ranking": {
+     "p50": 2.8,
+     "p95": 8.4,
+     "p99": 10.4
+    },
+    "ranking.constraints": {
+     "p50": 0.0,
+     "p95": 0.0,
+     "p99": 0.1
+    },
+    "ranking.explain": {
+     "p50": 0.0,
+     "p95": 0.4,
+     "p99": 0.5
+    },
+    "ranking.signals": {
+     "p50": 0.0,
+     "p95": 0.1,
+     "p99": 0.1
+    },
+    "retrieval": {
+     "p50": 2.9,
+     "p95": 8.9,
+     "p99": 10.9
+    },
+    "retrieval.bm25": {
+     "p50": 0.0,
+     "p95": 3.1,
+     "p99": 4.9
+    },
+    "retrieval.fusion": {
+     "p50": 0.0,
+     "p95": 0.7,
+     "p99": 1.1
+    },
+    "total": {
+     "p50": 6.3,
+     "p95": 18.1,
+     "p99": 39.4
+    }
+   }
+  },
+  {
+   "concurrency": 4,
+   "mode": "bm25",
+   "cache": false,
+   "requests": 2265,
+   "duration_s": 20.0,
+   "throughput_rps": 113.32,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 33.6,
+    "p95": 61.3,
+    "p99": 80.2,
+    "mean": 35.2,
+    "max": 96.7
+   },
+   "components_ms": {
+    "ranking": {
+     "p50": 11.5,
+     "p95": 23.9,
+     "p99": 46.7
+    },
+    "ranking.constraints": {
+     "p50": 0.0,
+     "p95": 0.0,
+     "p99": 0.1
+    },
+    "ranking.explain": {
+     "p50": 0.0,
+     "p95": 0.4,
+     "p99": 1.8
+    },
+    "ranking.signals": {
+     "p50": 0.0,
+     "p95": 0.1,
+     "p99": 0.2
+    },
+    "retrieval": {
+     "p50": 11.4,
+     "p95": 23.6,
+     "p99": 34.3
+    },
+    "retrieval.bm25": {
+     "p50": 0.0,
+     "p95": 4.1,
+     "p99": 6.5
+    },
+    "retrieval.fusion": {
+     "p50": 0.0,
+     "p95": 0.9,
+     "p99": 3.0
+    },
+    "total": {
+     "p50": 25.4,
+     "p95": 49.9,
+     "p99": 70.8
+    }
+   }
+  },
+  {
+   "concurrency": 8,
+   "mode": "bm25",
+   "cache": false,
+   "requests": 2381,
+   "duration_s": 20.0,
+   "throughput_rps": 118.97,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 64.5,
+    "p95": 107.2,
+    "p99": 125.8,
+    "mean": 67.0,
+    "max": 176.4
+   },
+   "components_ms": {
+    "ranking": {
+     "p50": 21.5,
+     "p95": 49.6,
+     "p99": 68.5
+    },
+    "ranking.constraints": {
+     "p50": 0.0,
+     "p95": 0.0,
+     "p99": 0.1
+    },
+    "ranking.explain": {
+     "p50": 0.0,
+     "p95": 0.4,
+     "p99": 4.3
+    },
+    "ranking.signals": {
+     "p50": 0.1,
+     "p95": 0.1,
+     "p99": 0.2
+    },
+    "retrieval": {
+     "p50": 21.6,
+     "p95": 43.2,
+     "p99": 60.1
+    },
+    "retrieval.bm25": {
+     "p50": 0.1,
+     "p95": 4.8,
+     "p99": 8.3
+    },
+    "retrieval.fusion": {
+     "p50": 0.1,
+     "p95": 1.0,
+     "p99": 4.2
+    },
+    "total": {
+     "p50": 47.8,
+     "p95": 88.8,
+     "p99": 107.0
+    }
+   }
+  },
+  {
+   "concurrency": 16,
+   "mode": "bm25",
+   "cache": false,
+   "requests": 2287,
+   "duration_s": 20.1,
+   "throughput_rps": 114.06,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 132.4,
+    "p95": 230.5,
+    "p99": 278.9,
+    "mean": 139.9,
+    "max": 385.6
+   },
+   "components_ms": {
+    "ranking": {
+     "p50": 42.3,
+     "p95": 106.5,
+     "p99": 154.5
+    },
+    "ranking.constraints": {
+     "p50": 0.0,
+     "p95": 0.0,
+     "p99": 0.1
+    },
+    "ranking.explain": {
+     "p50": 0.0,
+     "p95": 0.5,
+     "p99": 4.5
+    },
+    "ranking.signals": {
+     "p50": 0.0,
+     "p95": 0.1,
+     "p99": 0.3
+    },
+    "retrieval": {
+     "p50": 46.2,
+     "p95": 105.6,
+     "p99": 148.3
+    },
+    "retrieval.bm25": {
+     "p50": 0.0,
+     "p95": 5.9,
+     "p99": 10.8
+    },
+    "retrieval.fusion": {
+     "p50": 0.0,
+     "p95": 2.0,
+     "p99": 5.6
+    },
+    "total": {
+     "p50": 100.7,
+     "p95": 193.3,
+     "p99": 241.1
+    }
+   }
+  }
+ ]
+}

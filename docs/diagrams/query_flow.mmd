@@ -1,0 +1,30 @@
+sequenceDiagram
+  autonumber
+  participant U as User / UI
+  participant G as Gateway
+  participant I as Intent
+  participant E as Embedding
+  participant R as Retrieval
+  participant K as Ranking
+  U->>G: POST /search {"Chennai summer ku comfortable cotton dress venum under 2000"}
+  G->>G: cache lookup (key includes catalogue_version)
+  G->>I: /parse
+  I->>I: script+marker lang-ID → tanglish
+  I-->>I: LLM JSON decomposition (if configured) ⟶ normalise to vocabulary
+  I->>I: rules: budget ≤2000 · category dress · cotton · comfort · Chennai+summer ⟶ hot_humid
+  I-->>G: Intent (+ warnings, parser used)
+  G->>G: hard filters = {price≤2000, in stock, category=dress}
+  par parallel
+    G->>E: e5 query vector (original + English rewrite)
+    G->>E: CLIP text vector ("a photo of cotton dress")
+  end
+  G->>R: /retrieve {BM25 text, e5 vector, CLIP vector, filters, pool=100}
+  R->>R: BM25 (filter-aware) ‖ Qdrant ANN (payload filter) → RRF union
+  R->>R: complete signals (BM25 for dense hits, cosine for BM25 hits, CLIP visual from stored image vectors)
+  R-->>G: candidates with raw signals
+  G->>K: /rank {intent, candidates, filters}
+  K->>K: re-check constraints · signals (semantic, lexical, visual, occasion, climate, material, comfort)
+  K->>K: w(intent): climate×2.07, material×1.8, comfort×1.7, lexical×0.6 (tanglish), occasion→0
+  K->>K: score = Σ wᵢ·sᵢ (per-item renormalisation if image missing) → top-k → grounded explanation
+  K-->>G: results + weights + rationale
+  G-->>U: language · intent · constraints · retrieval mode · weights · products · score breakdown · explanation · timings

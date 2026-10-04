@@ -1,0 +1,107 @@
+# MOSAIC-Fashion — full stack.  Usage:
+#   ./scripts/download_models.sh          # once: fetch free open-source models into ./models
+#   cp .env.example .env                  # optional: configure a free LLM provider
+#   docker compose up -d --build
+#   docker compose run --rm seed          # load the catalogue (synthetic 5K or your Amazon JSONL)
+#   open http://localhost:8501 (UI) · http://localhost:8000/docs (API)
+x-svc: &svc
+  build: { context: ., dockerfile: docker/Dockerfile }
+  image: mosaic-fashion:latest
+  env_file: [.env]
+  restart: unless-stopped
+  environment: &env
+    POSTGRES_DSN: postgresql://mosaic:mosaic_dev_pw@postgres:5432/mosaic
+    REDIS_URL: redis://redis:6379/0
+    QDRANT_URL: http://qdrant:6333
+    GATEWAY_URL: http://gateway:8000
+    INTENT_URL: http://intent:8001
+    EMBEDDING_URL: http://embedding:8002
+    RETRIEVAL_URL: http://retrieval:8003
+    RANKING_URL: http://ranking:8004
+    CATALOGUE_URL: http://catalogue:8005
+    INDEXER_URL: http://indexer:8006
+    TEXT_MODEL_DIR: /app/models/multilingual-e5-small
+    CLIP_MODEL_DIR: /app/models/clip-vit-b32
+    IMAGE_ROOT: /app/data/images
+  volumes:
+    - ./models:/app/models:ro
+    - ./data:/app/data:ro
+
+services:
+  # ------------------------------------------------------------------ infrastructure
+  postgres:
+    image: postgres:16-alpine
+    environment: { POSTGRES_USER: mosaic, POSTGRES_PASSWORD: mosaic_dev_pw, POSTGRES_DB: mosaic }
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U mosaic"], interval: 5s, retries: 20 }
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    volumes: [redisdata:/data]
+    healthcheck: { test: ["CMD", "redis-cli", "ping"], interval: 5s, retries: 20 }
+  qdrant:
+    image: qdrant/qdrant:v1.19.0
+    volumes: [qdrantdata:/qdrant/storage]
+    ports: ["6333:6333"]
+
+  # ------------------------------------------------------------------ microservices
+  catalogue:
+    <<: *svc
+    command: ["uvicorn", "services.catalogue.app:app", "--host", "0.0.0.0", "--port", "8005"]
+    environment: { <<: *env, PORT: "8005" }
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy } }
+  embedding:
+    <<: *svc
+    command: ["uvicorn", "services.embedding.app:app", "--host", "0.0.0.0", "--port", "8002"]
+    environment: { <<: *env, PORT: "8002" }
+    depends_on: { redis: { condition: service_healthy } }
+    deploy: { resources: { limits: { cpus: "2", memory: 3g } } }
+  intent:
+    <<: *svc
+    command: ["uvicorn", "services.intent.app:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "2"]
+    environment: { <<: *env, PORT: "8001" }
+    depends_on: { redis: { condition: service_healthy } }
+  retrieval:
+    <<: *svc
+    command: ["uvicorn", "services.retrieval.app:app", "--host", "0.0.0.0", "--port", "8003"]
+    environment: { <<: *env, PORT: "8003" }
+    depends_on: { qdrant: { condition: service_started }, catalogue: { condition: service_healthy } }
+  ranking:
+    <<: *svc
+    command: ["uvicorn", "services.ranking.app:app", "--host", "0.0.0.0", "--port", "8004", "--workers", "2"]
+    environment: { <<: *env, PORT: "8004" }
+  indexer:
+    <<: *svc
+    command: ["python", "-m", "services.indexer.worker"]
+    environment: { <<: *env, PORT: "8006" }
+    depends_on: { qdrant: { condition: service_started }, embedding: { condition: service_healthy }, catalogue: { condition: service_healthy } }
+  gateway:
+    <<: *svc
+    command: ["uvicorn", "services.gateway.app:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+    environment: { <<: *env, PORT: "8000" }
+    ports: ["8000:8000"]
+    depends_on: [intent, embedding, retrieval, ranking, catalogue]
+  ui:
+    <<: *svc
+    command: ["streamlit", "run", "ui/streamlit_app.py", "--server.port", "8501", "--server.headless", "true"]
+    environment: { <<: *env, PORT: "8501" }
+    ports: ["8501:8501"]
+    healthcheck: { test: ["CMD-SHELL", "curl -fs http://localhost:8501/_stcore/health || exit 1"], interval: 15s }
+    depends_on: [gateway]
+
+  # ------------------------------------------------------------------ one-off jobs
+  seed:
+    <<: *svc
+    profiles: ["tools"]
+    restart: "no"
+    command: ["bash", "-c", "python -m ingestion.load_catalogue --file ${CATALOGUE_FILE:-data/catalogue.jsonl} --no-wait"]
+    depends_on: [catalogue]
+
+  # ------------------------------------------------------------------ optional monitoring (docker compose --profile monitoring up)
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    profiles: ["monitoring"]
+    volumes: ["./docker/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+
+volumes: { pgdata: {}, redisdata: {}, qdrantdata: {} }

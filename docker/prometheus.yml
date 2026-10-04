@@ -1,0 +1,5 @@
+global: { scrape_interval: 10s }
+scrape_configs:
+  - job_name: mosaic
+    static_configs:
+      - targets: ["gateway:8000", "intent:8001", "embedding:8002", "retrieval:8003", "ranking:8004", "catalogue:8005", "indexer:8006"]

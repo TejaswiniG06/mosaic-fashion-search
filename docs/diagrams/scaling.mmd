@@ -1,0 +1,27 @@
+flowchart TB
+  subgraph Edge
+    CDN[CDN / API gateway<br/>auth · WAF · rate limits]
+  end
+  subgraph Query["Query tier (k8s HPA on CPU + p95)"]
+    GW1[gateway ×N]
+    IN1[intent ×N<br/>LLM calls behind cache + budget]
+    EM1[embedding ×N<br/>CPU ONNX or GPU Triton; batching]
+    RT1[retrieval ×N<br/>stateless; BM25 via OpenSearch]
+    RK1[ranking ×N]
+  end
+  subgraph Index["Index tier"]
+    QD1[(Qdrant cluster<br/>shards × replicas<br/>scalar/PQ quantisation<br/>on-disk vectors)]
+    OS[(OpenSearch / Qdrant sparse vectors<br/>sharded BM25)]
+  end
+  subgraph Ingest["Ingestion tier"]
+    K[(Kafka / Redis Streams<br/>partitioned by product id)]
+    IX[indexer workers ×M<br/>GPU batch embedding]
+    BF[backfill job<br/>Spark/Ray for full re-embeds<br/>blue-green collection alias]
+  end
+  PG1[(Postgres primary + read replicas<br/>or managed catalogue DB)]
+  RC1[(Redis cluster<br/>query/embedding cache)]
+  CDN --> GW1 --> IN1 & EM1 & RT1 & RK1
+  RT1 --> QD1 & OS
+  GW1 <--> RC1
+  PG1 -->|CDC / outbox| K --> IX --> QD1 & OS
+  BF --> QD1

@@ -1,0 +1,14 @@
+[theme]
+base = "light"
+primaryColor = "#7c3aed"
+font = "sans serif"
+
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "viewer"
+showSidebarNavigation = true

@@ -1,0 +1,18 @@
+[project]
+name = "mosaic-fashion"
+version = "1.0.0"
+description = "MOSAIC-Fashion: Multilingual Context-Aware Semantic Fashion Recommendation"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+where = ["libs", "."]
+include = ["mosaic_common*", "services*", "ingestion*", "evaluation*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["libs", "."]
+asyncio_mode = "auto"
+markers = ["integration: requires the running stack (make up)"]
+
+[tool.ruff]
+line-length = 140

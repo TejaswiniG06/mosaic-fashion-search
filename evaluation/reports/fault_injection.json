@@ -1,0 +1,389 @@
+[
+ {
+  "drill": "baseline (all healthy)",
+  "success_rate": 1.0,
+  "error_rate": 0.0,
+  "p50_ms": 209,
+  "degraded_flags": [],
+  "samples": [
+   {
+    "status": 200,
+    "ms": 316,
+    "results": 5,
+    "degraded": [],
+    "parser": "rules",
+    "retrieval_mode": "hybrid+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 159,
+    "results": 5,
+    "degraded": [],
+    "parser": "rules",
+    "retrieval_mode": "hybrid+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 209,
+    "results": 5,
+    "degraded": [],
+    "parser": "rules",
+    "retrieval_mode": "hybrid+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 945,
+    "results": 5,
+    "degraded": [],
+    "parser": "rules",
+    "retrieval_mode": "hybrid+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 160,
+    "results": 5,
+    "degraded": [],
+    "parser": "rules",
+    "retrieval_mode": "hybrid+clip_rerank"
+   }
+  ]
+ },
+ {
+  "drill": "LLM endpoint unreachable",
+  "success_rate": 1.0,
+  "error_rate": 0.0,
+  "p50_ms": 42,
+  "degraded_flags": [
+   "llm_failed->rules"
+  ],
+  "samples": [
+   {
+    "ms": 54,
+    "parser": "rules",
+    "warning": "llm unavailable (LLMError); used deterministic parser",
+    "category": [
+     "dress"
+    ],
+    "budget_max": 2000.0
+   },
+   {
+    "ms": 42,
+    "parser": "rules",
+    "warning": "llm unavailable (LLMError); used deterministic parser",
+    "category": [
+     "lehenga"
+    ],
+    "budget_max": null
+   },
+   {
+    "ms": 43,
+    "parser": "rules",
+    "warning": "llm unavailable (LLMError); used deterministic parser",
+    "category": [
+     "jacket"
+    ],
+    "budget_max": null
+   },
+   {
+    "ms": 40,
+    "parser": "rules",
+    "warning": "llm unavailable (LLMError); used deterministic parser",
+    "category": [
+     "saree"
+    ],
+    "budget_max": null
+   },
+   {
+    "ms": 39,
+    "parser": "rules",
+    "warning": "llm unavailable (LLMError); used deterministic parser",
+    "category": [
+     "shirt"
+    ],
+    "budget_max": null
+   }
+  ]
+ },
+ {
+  "drill": "intent service down",
+  "success_rate": 1.0,
+  "error_rate": 0.0,
+  "p50_ms": 316,
+  "degraded_flags": [
+   "intent_unavailable"
+  ],
+  "samples": [
+   {
+    "status": 200,
+    "ms": 371,
+    "results": 5,
+    "degraded": [
+     "intent_unavailable:ConnectError"
+    ],
+    "parser": "passthrough",
+    "retrieval_mode": "hybrid+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 265,
+    "results": 5,
+    "degraded": [
+     "intent_unavailable:ConnectError"
+    ],
+    "parser": "passthrough",
+    "retrieval_mode": "hybrid+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 318,
+    "results": 5,
+    "degraded": [
+     "intent_unavailable:ConnectError"
+    ],
+    "parser": "passthrough",
+    "retrieval_mode": "hybrid+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 283,
+    "results": 5,
+    "degraded": [
+     "intent_unavailable:ConnectError"
+    ],
+    "parser": "passthrough",
+    "retrieval_mode": "hybrid+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 316,
+    "results": 5,
+    "degraded": [
+     "intent_unavailable:ConnectError"
+    ],
+    "parser": "passthrough",
+    "retrieval_mode": "hybrid+clip_rerank"
+   }
+  ],
+  "recovered": 1.0
+ },
+ {
+  "drill": "embedding service down",
+  "success_rate": 1.0,
+  "error_rate": 0.0,
+  "p50_ms": 243,
+  "degraded_flags": [
+   "embedding_clip_unavailable",
+   "embedding_text_unavailable",
+   "no_query_vector"
+  ],
+  "samples": [
+   {
+    "status": 200,
+    "ms": 329,
+    "results": 5,
+    "degraded": [
+     "embedding_text_unavailable:ConnectError",
+     "embedding_clip_unavailable:ConnectError",
+     "no_query_vector:bm25_only"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "bm25"
+   },
+   {
+    "status": 200,
+    "ms": 243,
+    "results": 5,
+    "degraded": [
+     "embedding_text_unavailable:ConnectError",
+     "embedding_clip_unavailable:ConnectError",
+     "no_query_vector:bm25_only"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "bm25"
+   },
+   {
+    "status": 200,
+    "ms": 284,
+    "results": 5,
+    "degraded": [
+     "embedding_text_unavailable:ConnectError",
+     "embedding_clip_unavailable:ConnectError",
+     "no_query_vector:bm25_only"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "bm25"
+   },
+   {
+    "status": 200,
+    "ms": 133,
+    "results": 5,
+    "degraded": [
+     "embedding_text_unavailable:CircuitOpenError",
+     "embedding_clip_unavailable:CircuitOpenError",
+     "no_query_vector:bm25_only"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "bm25"
+   },
+   {
+    "status": 200,
+    "ms": 89,
+    "results": 5,
+    "degraded": [
+     "embedding_text_unavailable:CircuitOpenError",
+     "embedding_clip_unavailable:CircuitOpenError",
+     "no_query_vector:bm25_only"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "bm25"
+   }
+  ],
+  "recovered": 1.0
+ },
+ {
+  "drill": "Qdrant (vector DB) down",
+  "success_rate": 1.0,
+  "error_rate": 0.0,
+  "p50_ms": 105,
+  "degraded_flags": [
+   "vector_search_unavailable"
+  ],
+  "samples": [
+   {
+    "status": 200,
+    "ms": 264,
+    "results": 5,
+    "degraded": [
+     "vector_search_unavailable:AioRpcError"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "bm25+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 86,
+    "results": 5,
+    "degraded": [
+     "vector_search_unavailable:AioRpcError"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "bm25+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 182,
+    "results": 5,
+    "degraded": [
+     "vector_search_unavailable:AioRpcError"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "bm25+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 105,
+    "results": 5,
+    "degraded": [
+     "vector_search_unavailable:AioRpcError"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "bm25+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 88,
+    "results": 5,
+    "degraded": [
+     "vector_search_unavailable:AioRpcError"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "bm25+clip_rerank"
+   }
+  ],
+  "recovered": 1.0
+ },
+ {
+  "drill": "ranking service down",
+  "success_rate": 1.0,
+  "error_rate": 0.0,
+  "p50_ms": 330,
+  "degraded_flags": [
+   "ranking_unavailable"
+  ],
+  "samples": [
+   {
+    "status": 200,
+    "ms": 396,
+    "results": 5,
+    "degraded": [
+     "ranking_unavailable:ConnectError:retrieval_order"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "hybrid+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 311,
+    "results": 5,
+    "degraded": [
+     "ranking_unavailable:ConnectError:retrieval_order"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "hybrid+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 364,
+    "results": 5,
+    "degraded": [
+     "ranking_unavailable:ConnectError:retrieval_order"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "hybrid+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 330,
+    "results": 5,
+    "degraded": [
+     "ranking_unavailable:ConnectError:retrieval_order"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "hybrid+clip_rerank"
+   },
+   {
+    "status": 200,
+    "ms": 304,
+    "results": 5,
+    "degraded": [
+     "ranking_unavailable:ConnectError:retrieval_order"
+    ],
+    "parser": "rules",
+    "retrieval_mode": "hybrid+clip_rerank"
+   }
+  ],
+  "recovered": 1.0
+ },
+ {
+  "drill": "product image unreachable",
+  "success_rate": 1.0,
+  "error_rate": 0.0,
+  "p50_ms": null,
+  "degraded_flags": [
+   "text-only point (has_image=false)"
+  ],
+  "samples": [
+   {
+    "found": true,
+    "has_image": false,
+    "visual_component": 1.0,
+    "contributions": {
+     "semantic": 0.3165,
+     "lexical": 0.1582,
+     "visual": 0.3165,
+     "material": 0.2089
+    }
+   }
+  ]
+ }
+]

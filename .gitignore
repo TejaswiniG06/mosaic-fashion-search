@@ -1,0 +1,17 @@
+.venv/
+.cache/
+__pycache__/
+*.pyc
+logs/
+.env
+models/*
+!models/README.md
+data/images/amazon/
+data/ground_truth_scale.jsonl
+data/amazon_catalogue*.jsonl
+
+.pytest_cache/
+tools/
+data/catalogue.db*
+data/qdrant_storage/
+data/qdrant_snapshots/

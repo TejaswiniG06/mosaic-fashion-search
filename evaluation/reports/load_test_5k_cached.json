@@ -1,0 +1,96 @@
+{
+ "meta": {
+  "generated": "2026-10-03 14:02:24",
+  "catalogue_size": 5000,
+  "host": "x86_64 \u00b7 2 vCPU (all services + Postgres/Redis/Qdrant on the same host)",
+  "duration": 10.0,
+  "n_queries": 120
+ },
+ "results": [
+  {
+   "concurrency": 8,
+   "mode": "mosaic",
+   "cache": true,
+   "requests": 2450,
+   "duration_s": 10.0,
+   "throughput_rps": 245.58,
+   "error_rate": 0.0,
+   "errors": {},
+   "degraded_responses": 0,
+   "latency_ms": {
+    "p50": 11.5,
+    "p95": 194.4,
+    "p99": 451.3,
+    "mean": 32.3,
+    "max": 691.5
+   },
+   "components_ms": {
+    "embedding": {
+     "p50": 19.4,
+     "p95": 54.4,
+     "p99": 76.4
+    },
+    "intent": {
+     "p50": 8.0,
+     "p95": 26.0,
+     "p99": 45.8
+    },
+    "ranking": {
+     "p50": 27.1,
+     "p95": 62.4,
+     "p99": 85.5
+    },
+    "ranking.constraints": {
+     "p50": 0.0,
+     "p95": 0.1,
+     "p99": 3.5
+    },
+    "ranking.explain": {
+     "p50": 0.2,
+     "p95": 3.4,
+     "p99": 8.5
+    },
+    "ranking.fusion": {
+     "p50": 0.5,
+     "p95": 4.5,
+     "p99": 5.6
+    },
+    "ranking.signals": {
+     "p50": 0.3,
+     "p95": 0.9,
+     "p99": 4.9
+    },
+    "retrieval": {
+     "p50": 280.1,
+     "p95": 425.7,
+     "p99": 557.5
+    },
+    "retrieval.bm25": {
+     "p50": 2.5,
+     "p95": 17.4,
+     "p99": 31.6
+    },
+    "retrieval.dense_ann": {
+     "p50": 138.8,
+     "p95": 232.7,
+     "p99": 252.4
+    },
+    "retrieval.fusion": {
+     "p50": 0.8,
+     "p95": 2.3,
+     "p99": 3.8
+    },
+    "retrieval.signal_completion": {
+     "p50": 38.0,
+     "p95": 120.4,
+     "p99": 136.0
+    },
+    "total": {
+     "p50": 338.5,
+     "p95": 503.7,
+     "p99": 636.3
+    }
+   }
+  }
+ ]
+}
