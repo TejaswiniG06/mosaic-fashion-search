@@ -1,6 +1,11 @@
 # Evaluation methodology & results
 
-All numbers below were produced by the scripts in `evaluation/` against the running stack; raw per-query rows are in
+The relevance, load, freshness, scale and resilience measurements in sections 1–5
+predate security commit `29901c6` on 5 October 2026. They have not been rerun with
+the current image restrictions and LLM safeguards. Section 6 describes security
+verification separately; unit-test success is not a new relevance or load result.
+
+The historical measurements were produced by the scripts in `evaluation/` against the running stack; raw per-query rows are in
 `evaluation/reports/*.json`, rendered tables in `evaluation/reports/*.md`. Nothing is hand-entered.
 
 ## 1. Relevance evaluation (`make eval` → `evaluation/run_offline_eval.py`)
@@ -66,8 +71,8 @@ Language identification accuracy on the 120 queries: en 1.00 · ta 1.00 · tangl
 * **Failure analysis** (lowest-NDCG MOSAIC queries in `offline_eval.json`):
   * *N26 Tamil/Hindi "formal shoes" → NDCG 0.* The rule lexicon maps "ஷூ"/"जूते" (shoes) to *sneakers*, and the
     explicit-category hard filter then excludes every formal shoe. This is the main risk of hard category filters on
-    imperfect parsing. With an LLM configured, this is the kind of case the LLM path is there to fix. A production safeguard
-    is to relax the category filter when parser confidence is low (listed under limitations).
+    imperfect parsing. The current security merge preserves explicit rule categories, so enabling the LLM cannot fix this
+    hard filter. Correct the rule lexicon or design a confidence-aware category relaxation policy (listed under limitations).
   * *N22 Tamil/Hindi "sangeet"* is not in the occasion lexicon, so the occasion signal is lost (0.49–0.62).
   * *N25 hoodie / N08 Tamil eco t-shirt*: few relevant items, and "ஆர்கானிக்" (organic) is not in the lexicon.
   These were deliberately **not** patched into the lexicon after seeing them. Doing so would tune on the test set.
@@ -149,3 +154,37 @@ Each drill breaks one dependency of the live 100K stack, sends real multilingual
 | product with unreachable image URL | indexed and found | 0 % | `has_image=false` (text + attribute appearance) | – |
 
 Circuit breakers fail fast while a dependency is down. They recover through half-open trials about 15 s after it returns.
+
+## 6. Security verification after commit 29901c6
+
+Security tests are in `tests/test_image_security.py` and `tests/test_llm_security.py`.
+They exercise the following boundaries without live credentials or model weights:
+
+| boundary | checked behavior |
+|---|---|
+| Remote image destinations | Nonapproved hosts, HTTP, credentials, nonstandard ports, private addresses and mixed public/private DNS answers do not reach the HTTP transport |
+| Image connections | Approved public connections use a validated IP with the original Host and TLS SNI; redirects and compressed HTTP responses are rejected |
+| Image resources | Local traversal/outside-root paths, excess byte/pixel counts and invalid base64 are rejected; valid local images still load |
+| Model output | Unknown keys, wrong types, excessive fields, nonfinite/negative budgets and reversed ranges are rejected |
+| Hard constraints | Model output cannot replace explicit rule categories or invent hard budget, size or gender constraints |
+| Explanations | Ordered complete approved sentences are accepted; invented claims, changed numbers, partial sentences and instruction text are rejected; invalid model output retains the template |
+
+During implementation, the broader unit run passed 81 tests, with 3 model-dependent
+tests skipped and 7 integration tests deselected. After the final code edits,
+the focused image-security, LLM-security and ranking run passed 39 tests.
+During the documentation update on 5 October 2026, the two security modules alone
+were rerun and passed all 31 tests.
+These are local verification results, not live-provider attack-success rates.
+
+To reproduce the security checks:
+
+```bash
+python -m pytest tests/test_image_security.py tests/test_llm_security.py -q
+```
+
+Live CDN/TLS behavior, provider-backed adversarial queries, legitimate requests
+incorrectly blocked, security overhead and deployment-level behavior remain
+unmeasured. Before replacing the historical tables, rerun relevance, load,
+freshness, scale and fault drills with the secured version and record the commit,
+configuration, dataset/model versions and host alongside the results. See
+[Security](SECURITY.md) and [Limitations](LIMITATIONS.md).

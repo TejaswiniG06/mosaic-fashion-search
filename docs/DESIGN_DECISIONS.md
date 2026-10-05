@@ -2,6 +2,9 @@
 
 Each entry: **decision → why → trade-off / what would change it.**
 
+Numerical evidence below comes from runs before security commit `29901c6` on
+5 October 2026. Current-version relevance and performance reruns are pending.
+
 ## 1. Problem framing: search is *constraint satisfaction + preference ranking*, not just similarity
 Human queries mix three kinds of information:
 
@@ -70,11 +73,14 @@ and season cues. This generalises to items whose text never mentions the weather
 ## 7. LLM: optional, free, constrained, never selects products
 * Providers: OpenAI-compatible (Groq free tier, OpenRouter `:free` models, local vLLM/LM Studio), Gemini free tier, Ollama.
   Default `LLM_PROVIDER=none` ⇒ fully offline, zero cost.
-* Used for (1) intent decomposition to a fixed JSON schema and (2) optional explanation polishing. Output is normalised onto
-  the canonical vocabulary; out-of-vocabulary values are dropped with a warning.
-* **Numbers come from regex, not the LLM** (budget/size) — deterministic parsing wins on merge.
-* Explanation polishing is accepted only if it introduces no number or vocabulary term absent from the product facts
-  (`explain.grounded`); otherwise the template explanation is kept.
+* Queries are serialized as untrusted data. Fresh and cached intent output must satisfy a strict, bounded JSON contract
+  before canonical vocabulary normalisation. Unknown keys, wrong types, nonfinite budgets and invalid ranges are rejected.
+* **Rules own hard constraints.** Budget, size and gender are never filled by the LLM, and explicit rule categories cannot
+  be expanded by model output. This limits model-created filters, but unsupported numeric/size expressions need parser
+  improvements. A wrong rule category still needs a parser fix or a separately designed relaxation policy.
+* Optional explanations select ordered complete sentences from the approved template. Exact sentence validation replaces
+  the earlier number/vocabulary check, which could accept unsupported claims. The trade-off is reduced wording freedom;
+  neither user needs nor raw catalogue text can authorize new explanation claims.
 * Failure/timeout ⇒ deterministic multilingual rule parser (tested drill: unreachable LLM ⇒ 100% answered by rules).
 
 ## 8. Evolving catalogue: transactional outbox → Redis Streams → incremental indexers
@@ -110,3 +116,15 @@ and season cues. This generalises to items whose text never mentions the weather
 ## 11. Explainability as a first-class output
 Every result carries: match score, raw signal values, weighted contributions, the weight vector with rationale, the hard
 constraints it satisfied, and an explanation assembled only from intent + product fields (each clause traceable to a field).
+
+## 12. Image fetching uses an explicit trust boundary
+
+The embedding service accepts exact configured HTTPS CDN hosts on port 443, requires all DNS answers to be public,
+and pins the connection to a validated IP with the original hostname used for TLS verification. Redirects are rejected
+instead of followed, preventing an approved URL from redirecting to an internal service. Environment proxies are disabled.
+Local files must resolve inside `IMAGE_ROOT`; bounded reads, strict base64 decoding and pixel limits constrain processing.
+
+The trade-off is that custom CDNs need configuration, HTTP/redirecting URLs are unsupported, and large or unsupported
+images use the text-only fallback. These controls currently cover the embedding service; standalone ingestion/download
+tools and UI image display have separate paths and are not covered by this loader. Network egress restrictions and
+trusted catalogue ingestion remain complementary controls. See [Security](SECURITY.md).

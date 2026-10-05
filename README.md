@@ -21,7 +21,8 @@ query-dependent weights (with the reasons for them), the hard constraints it sat
 | Multimodal | OpenCLIP ViT-B/32 image vectors per product; text→image and image→image similarity; query-by-image |
 | **Contribution: context-adaptive ranking** | 7 signals (semantic, lexical, visual, occasion, climate, material, comfort). Weights are a **function of the decomposed intent**: e.g. image query → visual ×3.5; Chennai+summer+cotton+comfort → climate ×2.07, material ×1.8, comfort ×1.7; code-mixed query → lexical ×0.6. Signals with no evidence are switched off, and a missing image is renormalised per item |
 | Hard constraints | price, stock, size, explicit category and gender are **filters**, not similarity |
-| Grounded LLM use | LLM only decomposes intent and (optionally) polishes explanations. It never sees or picks products. Polished text is rejected if it adds any number or attribute not in the product facts |
+| Constrained LLM use | Strict, bounded JSON validation for fresh and cached intent output; canonical vocabulary normalisation; rules own hard budget, size, gender and explicit category constraints. Optional explanations select ordered complete sentences from the approved template; rewritten or added claims retain the template |
+| Safe image handling | Embedding-service downloads require approved HTTPS hosts and public DNS answers; connections are IP-pinned with hostname TLS verification. Redirects are rejected, local paths stay inside `IMAGE_ROOT`, and byte/pixel limits bound image loading |
 | Evolving catalogue | ADD / UPDATE / DELETE → Postgres + **transactional outbox** → Redis Streams → incremental Qdrant upserts and BM25 deltas. **No rebuilds.** Measured time-to-searchable ≈ **0.2 s** (lexical) / **0.25 s** (dense) |
 | Reliability | health/readiness on every service, structured JSON logs with request IDs, Prometheus metrics, timeouts/retries/circuit breakers, explicit degraded modes (LLM→rules, vector→BM25, image→text, ranking→retrieval order), validation, admin key, `.env` config |
 | Evaluation | 120 multilingual queries; BM25 / Dense / Hybrid / MOSAIC + 6 ablations; P@5/10, R@10, NDCG@10, MRR, MAP, HitRate, constraint satisfaction; significance tests; load, scale and fault-injection tests |
@@ -43,6 +44,10 @@ docker compose up -d --build && docker compose run --rm seed
 Native run, real Amazon Reviews 2023 data, free LLM setup and every env var: **[docs/RUNNING.md](docs/RUNNING.md)**.
 
 ## Results (measured, 5K-product catalogue, 120 queries; full tables in `evaluation/reports/`)
+These relevance, latency, scale, freshness and resilience measurements predate security commit
+`29901c6` (5 October 2026). They have not been rerun with the image restrictions and LLM safeguards;
+they are historical baseline results, not measurements of the current secured version.
+
 | System | P@10 | R@10 | NDCG@10 | MRR | MAP@10 | ConstraintSat@10 |
 |---|---|---|---|---|---|---|
 | BM25 | 0.346 | 0.047 | 0.306 | 0.395 | 0.309 | 0.361 |

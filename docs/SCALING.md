@@ -3,6 +3,10 @@
 ![scaling](diagrams/scaling.png)
 
 ## What was actually measured
+The measurements below predate security commit `29901c6` (5 October 2026). Scale,
+ingestion and latency have not been remeasured with the image restrictions and
+LLM safeguards; use these as historical baseline results.
+
 `evaluation/scale_test.py` grows the **live** catalogue through the normal ADD path and measures ingestion rate,
 time-to-searchable, latency, relevance and memory at each size. Results: `evaluation/reports/scale_test.md`.
 Host: 2 vCPU / 7 GB RAM with all 7 services + Postgres + Redis + Qdrant co-located, so absolute throughput is

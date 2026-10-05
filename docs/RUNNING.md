@@ -50,10 +50,14 @@ See `.env.example` (documented inline). The important ones:
 |---|---|---|
 | `LLM_PROVIDER` | `none` | `none` · `openai_compat` (Groq / OpenRouter free / local vLLM) · `gemini` · `ollama` |
 | `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` | Groq / llama-3.1-8b-instant | free-tier provider settings |
-| `LLM_EXPLANATIONS` | `false` | polish explanations with the LLM (grounding-checked) |
+| `LLM_EXPLANATIONS` | `false` | allow the LLM to select complete approved template sentences; rewritten output retains the template |
 | `ADMIN_API_KEY` | `change-me-admin-key` | required header `x-api-key` for catalogue writes — **change it** |
 | `POSTGRES_DSN`, `REDIS_URL`, `QDRANT_URL` | localhost | infrastructure |
 | `TEXT_MODEL_DIR`, `CLIP_MODEL_DIR`, `IMAGE_ROOT` | `./models/...`, `./data/images` | model and image locations |
+| `IMAGE_ALLOWED_HOSTS` | Amazon CDN hostnames in `.env.example` | JSON array of exact allowed HTTPS image hosts; no wildcards |
+| `MAX_IMAGE_BYTES` | 4000000 | maximum bytes per embedding-service image; base64 and local reads are also bounded |
+| `MAX_IMAGE_PIXELS` | 20000000 | maximum decoded width × height; JPEG, PNG and WebP only |
+| `IMAGE_FETCH_TIMEOUT_S` | 3 | embedding-service remote fetch deadline in seconds, including DNS and streaming |
 | `CANDIDATE_POOL`, `RRF_K` | 100, 60 | retrieval breadth / fusion |
 | `RATE_LIMIT_RPS`, `RATE_LIMIT_BURST` | 50, 100 | per-IP limit at the gateway; set `RATE_LIMIT_RPS=0` for benchmarks |
 
@@ -66,6 +70,44 @@ LLM_PROVIDER=gemini LLM_MODEL=gemini-2.0-flash LLM_API_KEY=...
 # Fully local
 ollama pull qwen2.5:3b && LLM_PROVIDER=ollama LLM_BASE_URL=http://localhost:11434 LLM_MODEL=qwen2.5:3b
 ```
+
+## Configure image security
+
+Keep the default Amazon hosts when using Amazon image URLs. To add a trusted CDN,
+retain the hosts you need and add its exact hostname to the JSON array in `.env`:
+
+```dotenv
+IMAGE_ALLOWED_HOSTS=["m.media-amazon.com","images-na.ssl-images-amazon.com","images-eu.ssl-images-amazon.com","cdn.your-store.example"]
+MAX_IMAGE_BYTES=4000000
+MAX_IMAGE_PIXELS=20000000
+IMAGE_FETCH_TIMEOUT_S=3
+```
+
+Replace `cdn.your-store.example` with your actual trusted host and restart the
+embedding service after changing its settings. `IMAGE_ALLOWED_HOSTS=[]` disables
+remote image downloads while leaving local images and uploaded base64 images
+available. Wildcards and subdomains are not implicitly allowed. Remote URLs must
+use HTTPS on port 443, resolve exclusively to public IPs and return the image
+directly without redirects or HTTP compression. Local paths must be inside
+`IMAGE_ROOT`; `local://dress.png` resolves relative to that directory.
+
+Blocked, unreadable or oversized images use the existing text-only fallback. The
+controls cover embedding-service loading, not the standalone image downloader
+or the browser/UI display path. See [Security](SECURITY.md) for the full scope.
+
+## Verify security behavior
+
+After installing `requirements-dev.txt`, run:
+
+```bash
+python -m pytest tests/test_image_security.py tests/test_llm_security.py -q
+```
+
+These tests use fake DNS and HTTP transports and require no model weights, running
+datastores or provider credentials. Before deployment, separately validate a real
+approved CDN URL, an uploaded image and the configured live LLM provider. Rerun
+`make eval load faults` and the scale test when publishing current-version metrics;
+the checked-in measurements predate security commit `29901c6`.
 
 ## API quick reference
 ```bash

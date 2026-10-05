@@ -19,6 +19,12 @@ with `IMAGE_FETCH_TIMEOUT_S`. Environment proxies are disabled for this client.
 Add your own trusted CDN explicitly. Network egress restrictions remain useful
 defense in depth. Do not expose the internal embedding service directly.
 
+This loader protects the embedding service only. The standalone
+`ingestion/download_images.py` tool and UI image display use separate paths.
+The current tests verify connection pinning with a mocked transport; a live
+CDN/TLS deployment check is still pending. Configuration examples are in
+[Running](RUNNING.md#configure-image-security).
+
 ## Untrusted LLM output
 
 Queries are serialized as untrusted JSON data. Model output must be a bounded JSON
@@ -48,3 +54,5 @@ They cover private and mixed DNS answers, URL restrictions, connection pinning,
 redirects, bounded streams, local traversal, pixel/base64 limits, malformed model
 outputs, hard constraint preservation and unsupported explanation rejection.
 Live provider, CDN and deployment validation should accompany deployment.
+See [Evaluation](EVALUATION.md#6-security-verification-after-commit-29901c6) for
+test-run evidence and the distinction from historical performance measurements.
