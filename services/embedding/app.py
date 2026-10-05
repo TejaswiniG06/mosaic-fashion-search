@@ -10,10 +10,7 @@ Production notes
 from __future__ import annotations
 
 import asyncio
-import base64
 import hashlib
-from contextlib import asynccontextmanager
-from pathlib import Path
 
 import httpx
 import numpy as np
@@ -23,7 +20,8 @@ from pydantic import BaseModel, Field
 
 from mosaic_common.config import get_settings
 from mosaic_common.service import FALLBACKS, Timer, create_service
-from services.embedding.encoders import ClipEncoder, TextEncoder, decode_image, image_digest
+from services.embedding.encoders import ClipEncoder, TextEncoder, image_digest
+from services.embedding.image_security import decode_base64, decode_image, load_image_bytes
 
 settings = get_settings()
 STATE: dict = {}
@@ -39,7 +37,7 @@ class ClipTextReq(BaseModel):
 
 
 class ImageReq(BaseModel):
-    refs: list[str | None] = Field(default_factory=list, max_length=128)   # local://..., http(s)://..., or file path
+    refs: list[str | None] = Field(default_factory=list, max_length=128)   # local://..., approved HTTPS, or path inside IMAGE_ROOT
     b64: list[str] = Field(default_factory=list, max_length=8)
 
 
@@ -55,7 +53,7 @@ log = app.state.logger
 async def _startup():
     loop = asyncio.get_running_loop()
     STATE["redis"] = aioredis.from_url(settings.redis_url, protocol=2)
-    STATE["http"] = httpx.AsyncClient(timeout=settings.image_fetch_timeout_s, follow_redirects=True)
+    STATE["http"] = httpx.AsyncClient(timeout=settings.image_fetch_timeout_s, follow_redirects=False, trust_env=False)
     STATE["text"] = await loop.run_in_executor(None, lambda: TextEncoder(settings.text_model_dir, settings.text_model_file, settings.onnx_threads))
     STATE["clip"] = await loop.run_in_executor(None, lambda: ClipEncoder(settings.clip_model_dir, settings.onnx_threads))
     STATE["lock"] = asyncio.Semaphore(2)
@@ -115,22 +113,11 @@ async def embed_clip_text(req: ClipTextReq):
 
 async def _load_bytes(ref: str) -> bytes | None:
     try:
-        if ref.startswith("local://"):
-            p = (settings.image_root / ref[len("local://"):]).resolve()
-            if settings.image_root.resolve() not in p.parents:
-                return None  # path traversal guard
-            return await asyncio.to_thread(p.read_bytes)
-        if ref.startswith(("http://", "https://")):
-            r = await STATE["http"].get(ref)
-            if r.status_code == 200 and len(r.content) <= settings.max_image_bytes:
-                return r.content
-            return None
-        p = Path(ref)
-        if p.is_file():
-            return await asyncio.to_thread(p.read_bytes)
-    except Exception:
+        return await asyncio.wait_for(load_image_bytes(ref, settings.image_root, settings.max_image_bytes,
+                                                      settings.image_allowed_hosts, STATE["http"]),
+                                      timeout=settings.image_fetch_timeout_s)
+    except asyncio.TimeoutError:
         return None
-    return None
 
 
 async def _image_vectors(blobs: list[bytes | None]) -> tuple[list[list[float] | None], int]:
@@ -158,7 +145,7 @@ async def _image_vectors(blobs: list[bytes | None]) -> tuple[list[list[float] | 
         imgs, idx_groups = [], []
         for d, idxs in todo.items():
             try:
-                imgs.append(decode_image(blobs[idxs[0]]))
+                imgs.append(decode_image(blobs[idxs[0]], settings.max_image_pixels))
                 idx_groups.append((d, idxs))
             except Exception:
                 failed += len(idxs)
@@ -184,9 +171,7 @@ async def embed_image(req: ImageReq):
         blobs: list[bytes | None] = list(await asyncio.gather(*[_load_bytes(r) if r else asyncio.sleep(0, None) for r in req.refs]))
         for b in req.b64:
             try:
-                raw = base64.b64decode(b.split(",")[-1], validate=False)
-                if len(raw) > settings.max_image_bytes:
-                    raise HTTPException(413, "image too large")
+                raw = decode_base64(b, settings.max_image_bytes)
                 blobs.append(raw)
             except HTTPException:
                 raise

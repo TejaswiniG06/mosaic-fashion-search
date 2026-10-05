@@ -14,6 +14,7 @@ from mosaic_common.service import FALLBACKS, Timer, create_service
 from services.intent import rule_parser
 from services.intent.llm import LLMClient, LLMError
 from services.intent.normalizer import merge, normalise_llm
+from services.intent.output_security import validate_intent
 
 settings = get_settings()
 STATE: dict = {}
@@ -50,7 +51,7 @@ async def parse(req: IntentRequest) -> Intent:
             with Timer(timings, "llm", "intent"):
                 raw = await asyncio.wait_for(llm.decompose(req.query), timeout=settings.llm_timeout_s)
             await STATE["redis"].set(key, json.dumps(raw), ex=86400)
-        norm, warn = normalise_llm(raw)
+        norm, warn = normalise_llm(validate_intent(raw))
         out = merge(rules, norm, warn)
         out.has_query_image = req.has_query_image
         return out

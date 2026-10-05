@@ -55,7 +55,7 @@ def test_explanation_is_grounded_in_product_fields():
 
 
 def test_llm_grounding_check_rejects_invented_facts():
-    facts = "title=Cotton Dress; price=999; materials=['cotton']"
+    facts = "A breathable cotton dress at 999."
     assert explain.grounded("A breathable cotton dress at 999.", facts)
     assert not explain.grounded("A cotton dress, now only 499!", facts)          # invented number
     assert not explain.grounded("Elegant silk dress for you.", facts)            # invented material

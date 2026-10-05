@@ -1,9 +1,8 @@
 """Grounded explanation generation.
 
-Template explanations are assembled ONLY from (a) the parsed user intent and (b) real product
-metadata / computed signals — every clause is traceable to a field. Optional LLM polishing receives
-the same facts and its output is rejected (template kept) if it introduces any number or vocabulary
-term (material, colour, occasion, category) that is not present in the facts.
+Template explanations are assembled from parsed intent and product metadata / computed signals.
+Optional LLM output may only select ordered, complete sentences from the approved template.
+Any rewritten or added claim is rejected and the original template is retained.
 """
 from __future__ import annotations
 
@@ -15,9 +14,6 @@ from mosaic_common.schemas import Intent
 from services.retrieval.bm25 import doc_tokens, query_tokens
 
 from .signals import HOT
-
-VOCAB = set(kb.MATERIALS) | set(kb.COLOURS) | set(kb.OCCASIONS) | set(kb.CATEGORIES)
-
 
 def _fmt_price(x: float | None) -> str:
     return f"₹{x:,.0f}" if x is not None else "n/a"
@@ -113,14 +109,19 @@ def template_explanation(intent: Intent, p: dict[str, Any], comps: dict[str, flo
     return text, cons
 
 
-_NUM = re.compile(r"\d+(?:[.,]\d+)?")
-
-
 def grounded(llm_text: str, facts: str) -> bool:
-    if not llm_text or len(llm_text.split()) > 60:
+    """Accept only ordered, complete sentences from the approved template.
+
+    This is intentionally extractive: vocabulary checks cannot prove factual entailment.
+    """
+    if not llm_text or len(llm_text) > len(facts):
         return False
-    fact_nums = {n.replace(",", "") for n in _NUM.findall(facts)}
-    if any(n.replace(",", "") not in fact_nums for n in _NUM.findall(llm_text)):
-        return False
-    low_facts, low = facts.lower(), llm_text.lower()
-    return not any(re.search(rf"\b{re.escape(v)}\b", low) and v not in low_facts for v in VOCAB)
+    sentences = lambda text: re.split(r"(?<=[.!?])\s+", text.strip())
+    approved = sentences(facts)
+    pos = 0
+    for sentence in sentences(llm_text):
+        try:
+            pos = approved.index(sentence, pos) + 1
+        except ValueError:
+            return False
+    return True

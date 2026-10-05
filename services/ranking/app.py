@@ -94,12 +94,10 @@ async def _llm_polish(results: list[ScoredProduct], intent, llm: LLMClient) -> N
     needs = intent.normalized_query_en or intent.original_query
 
     async def one(r: ScoredProduct):
-        a = r.attributes
-        facts = (f"title={r.title}; price={r.price}; materials={a.get('materials')}; occasions={a.get('occasions')}; "
-                 f"comfort={a.get('comfort_tags')}; category={a.get('category')}; template={r.explanation}")
+        facts = r.explanation
         try:
             txt = await asyncio.wait_for(llm.explain(facts, needs), timeout=settings.llm_timeout_s)
-            if explain.grounded(txt, facts + " " + needs):
+            if explain.grounded(txt, facts):
                 r.explanation, r.explanation_source = txt, "llm"
             else:
                 FALLBACKS.labels("ranking", "llm_explanation_ungrounded").inc()

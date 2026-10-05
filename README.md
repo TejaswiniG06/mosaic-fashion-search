@@ -102,3 +102,4 @@ docs/                 ARCHITECTURE · DESIGN_DECISIONS · EVALUATION · SCALING 
 * [Scaling](docs/SCALING.md): measured 5K→100K, plan for millions
 * [Running](docs/RUNNING.md): Docker / native, Amazon data, free LLMs, env vars, API examples
 * [Limitations](docs/LIMITATIONS.md): what is not done or not verified, and the next steps
+* [Security](docs/SECURITY.md): bounded image loading, SSRF protections, strict LLM output contracts and security tests

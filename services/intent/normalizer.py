@@ -1,5 +1,5 @@
 """Attribute normalisation: maps free-form LLM slot values onto the canonical vocabulary and merges
-LLM output with the deterministic parse (rules win for numbers; LLM fills semantic gaps)."""
+LLM output with deterministic parsing (rules own hard constraints; LLM fills semantic gaps)."""
 from __future__ import annotations
 
 from typing import Any
@@ -80,10 +80,14 @@ def merge(rules: Intent, llm: dict[str, Any], warn: list[str]) -> Intent:
         d[k] = d[k] or llm.get(k)
     for k in ("comfort", "sustainability"):
         d[k] = d[k] or llm.get(k, False)
-    # numbers: deterministic regex wins; LLM fills only when regex found nothing
+    # Hard numeric/size constraints must have deterministic evidence in the query.
     for k in ("budget_min", "budget_max", "size"):
-        d[k] = d[k] if d[k] is not None else llm.get(k)
-    d["category_explicit"] = bool(d["category"]) and (rules.category_explicit or llm.get("category_explicit", False))
+        d[k] = getattr(rules, k)
+    # An LLM cannot expand explicit hard categories or invent new hard constraints.
+    if rules.category_explicit:
+        d["category"] = rules.category
+    d["category_explicit"] = rules.category_explicit
+    d["gender"] = rules.gender
     if llm.get("normalized_query_en"):
         d["normalized_query_en"] = llm["normalized_query_en"] + " | " + rules.normalized_query_en
     d["climate"] = kb.resolve_climate(d["destination"], d["season"]) or rules.climate

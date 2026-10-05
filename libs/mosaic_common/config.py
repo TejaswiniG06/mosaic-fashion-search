@@ -75,7 +75,9 @@ class Settings(BaseSettings):
     rate_limit_rps: float = 50.0     # per client IP token bucket at the gateway; 0 disables (benchmarks)
     rate_limit_burst: int = 100
     max_query_chars: int = 500
-    max_image_bytes: int = 4_000_000
+    max_image_bytes: int = Field(default=4_000_000, gt=0)
+    max_image_pixels: int = Field(default=20_000_000, gt=0)
+    image_allowed_hosts: list[str] = ["m.media-amazon.com", "images-na.ssl-images-amazon.com", "images-eu.ssl-images-amazon.com"]
 
     @field_validator("text_model_dir", "clip_model_dir", "image_root", "sqlite_path", mode="after")
     @classmethod
