@@ -53,6 +53,9 @@ Tests use fake DNS and HTTP transports, with no external provider credentials.
 They cover private and mixed DNS answers, URL restrictions, connection pinning,
 redirects, bounded streams, local traversal, pixel/base64 limits, malformed model
 outputs, hard constraint preservation and unsupported explanation rejection.
-Live provider, CDN and deployment validation should accompany deployment.
+The live Groq smoke check also exercises instruction-like queries and explanation
+selection through the intent/ranking endpoints. See [Live LLM verification](LLM_LIVE.md).
+Broader provider-backed security evaluation, live CDN and deployment validation
+should accompany deployment.
 See [Evaluation](EVALUATION.md#6-security-verification-after-commit-29901c6) for
 test-run evidence and the distinction from historical performance measurements.

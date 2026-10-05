@@ -49,7 +49,7 @@ See `.env.example` (documented inline). The important ones:
 | variable | default | purpose |
 |---|---|---|
 | `LLM_PROVIDER` | `none` | `none` · `openai_compat` (Groq / OpenRouter free / local vLLM) · `gemini` · `ollama` |
-| `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` | Groq / llama-3.1-8b-instant | free-tier provider settings |
+| `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` | Groq / openai/gpt-oss-20b | provider settings; keep the key in local `.env` |
 | `LLM_EXPLANATIONS` | `false` | allow the LLM to select complete approved template sentences; rewritten output retains the template |
 | `ADMIN_API_KEY` | `change-me-admin-key` | required header `x-api-key` for catalogue writes — **change it** |
 | `POSTGRES_DSN`, `REDIS_URL`, `QDRANT_URL` | localhost | infrastructure |
@@ -64,12 +64,31 @@ See `.env.example` (documented inline). The important ones:
 Free LLM examples:
 ```bash
 # Groq (free tier key from console.groq.com)
-LLM_PROVIDER=openai_compat LLM_BASE_URL=https://api.groq.com/openai/v1 LLM_MODEL=llama-3.1-8b-instant LLM_API_KEY=gsk_...
+LLM_PROVIDER=openai_compat LLM_BASE_URL=https://api.groq.com/openai/v1 LLM_MODEL=openai/gpt-oss-20b LLM_API_KEY=gsk_...
 # Google AI Studio (free tier)
 LLM_PROVIDER=gemini LLM_MODEL=gemini-2.0-flash LLM_API_KEY=...
 # Fully local
 ollama pull qwen2.5:3b && LLM_PROVIDER=ollama LLM_BASE_URL=http://localhost:11434 LLM_MODEL=qwen2.5:3b
 ```
+
+## Verify the optional LLM
+
+For Groq GPT-OSS models, the client uses low reasoning effort and a 1,024-token
+completion budget, including reasoning. The intent prompt explicitly requires empty
+arrays rather than null for absent list fields. Strict validation remains in place.
+The older Llama default was retired for developer-tier usage; see
+[Groq's deprecation notice](https://console.groq.com/docs/deprecations).
+
+To run the opt-in provider check after configuring `.env`:
+
+```bash
+PYTHONPATH=libs:. python -m evaluation.validate_llm
+```
+
+On PowerShell, set `$env:PYTHONPATH="libs;."` before the Python command.
+The check makes a small number of real API calls using synthetic requests and writes
+`evaluation/reports/llm_live.json`; it does not measure full-stack search quality.
+See [Live LLM verification](LLM_LIVE.md) for results and scope.
 
 ## Configure image security
 

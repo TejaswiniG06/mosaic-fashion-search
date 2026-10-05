@@ -182,9 +182,23 @@ To reproduce the security checks:
 python -m pytest tests/test_image_security.py tests/test_llm_security.py -q
 ```
 
-Live CDN/TLS behavior, provider-backed adversarial queries, legitimate requests
+Live CDN/TLS behavior, broad provider-backed adversarial evaluation, legitimate requests
 incorrectly blocked, security overhead and deployment-level behavior remain
 unmeasured. Before replacing the historical tables, rerun relevance, load,
 freshness, scale and fault drills with the secured version and record the commit,
 configuration, dataset/model versions and host alongside the results. See
 [Security](SECURITY.md) and [Limitations](LIMITATIONS.md).
+
+## 7. Live Groq smoke verification (5 October 2026)
+
+With Groq `openai/gpt-oss-20b`, the final run passed **14/14 checks** and received
+all **11 real provider responses**. It exercised five language examples, three
+instruction-like queries, approved explanation selection, a validated cache hit,
+and injected corrupt-cache/provider-outage fallback. The focused security/ranking
+regression suite passed **44 tests** after the compatibility and prompt fixes.
+
+These are small integration checks through in-process intent/ranking HTTP endpoints,
+with a memory cache and synthetic products. The gateway, Redis, catalogue, retrieval
+and encoder services were not part of this run. It does not update the relevance,
+latency or scale tables above. Earlier failures are retained in the report history.
+See [Live LLM verification](LLM_LIVE.md) for commands, evidence and limitations.

@@ -26,7 +26,11 @@ from pydantic import ValidationError
 
 INTENT_SYSTEM = """You are a query-understanding module for an Indian fashion e-commerce search engine.
 The user query may be English, Tamil (script), Tanglish (romanised Tamil mixed with English), Hindi, or Hinglish.
-Decompose it into JSON with exactly these keys (use null / [] / false when absent; never invent values):
+Decompose it into JSON with exactly these keys; never invent values.
+Array fields (category, occasion, style, material, colour, pattern, brand) must always be arrays:
+use [] when absent, NEVER null. Boolean fields must be true or false, using false when absent.
+Use null only for absent nullable scalars (season, destination, budget_min, budget_max, size, gender).
+normalized_query_en must always be a string.
 {"normalized_query_en": str (fluent English rewrite of the request),
  "category": [str] (garment types, e.g. dress, saree, kurta, shirt, t-shirt, jeans, sneakers, sandals, jacket),
  "category_explicit": bool (true only if the user named a garment type),
@@ -61,6 +65,13 @@ class LLMClient:
         if s.llm_provider == "openai_compat":
             body: dict[str, Any] = {"model": s.llm_model, "temperature": 0, "max_tokens": 400,
                                     "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}
+            # GPT-OSS counts reasoning in its completion budget. The old 400-token
+            # allowance can leave too little room for the intent JSON on Groq.
+            if s.llm_base_url.rstrip("/") == "https://api.groq.com/openai/v1" and s.llm_model in {
+                "openai/gpt-oss-20b", "openai/gpt-oss-120b"
+            }:
+                body.pop("max_tokens")
+                body.update(max_completion_tokens=1024, reasoning_effort="low")
             if json_mode:
                 body["response_format"] = {"type": "json_object"}
             r = await self._http.post(f"{s.llm_base_url.rstrip('/')}/chat/completions", json=body,

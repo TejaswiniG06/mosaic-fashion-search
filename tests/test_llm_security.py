@@ -1,3 +1,6 @@
+import json
+
+import httpx
 import pytest
 from pydantic import ValidationError
 
@@ -10,7 +13,36 @@ from services.intent.rule_parser import parse
 from services.ranking.explain import grounded
 
 
-@pytest.mark.parametrize("payload", [{"admin": True}, {"comfort": "false"}, {"category": "dress"},
+@pytest.mark.asyncio
+@pytest.mark.parametrize("model,base_url,groq_reasoning", [
+    ("openai/gpt-oss-20b", "https://api.groq.com/openai/v1", True),
+    ("openai/gpt-oss-120b", "https://api.groq.com/openai/v1/", True),
+    ("other-model", "https://api.groq.com/openai/v1", False),
+    ("openai/gpt-oss-20b", "https://other-provider.example/v1", False),
+])
+async def test_groq_reasoning_completion_budget(model, base_url, groq_reasoning):
+    client = LLMClient(Settings(llm_provider="openai_compat", llm_model=model, llm_base_url=base_url))
+    await client._http.aclose()
+
+    def reply(request):
+        body = json.loads(request.content)
+        assert body["response_format"] == {"type": "json_object"}
+        if groq_reasoning:
+            assert body["max_completion_tokens"] == 1024 and body["reasoning_effort"] == "low"
+            assert "max_tokens" not in body
+        else:
+            assert body["max_tokens"] == 400 and "reasoning_effort" not in body
+            assert "max_completion_tokens" not in body
+        return httpx.Response(200, json={"choices": [{"message": {"content": '{"category":[]}'}}]})
+
+    client._http = httpx.AsyncClient(transport=httpx.MockTransport(reply))
+    try:
+        assert (await client.decompose("outfit"))["category"] == []
+    finally:
+        await client._http.aclose()
+
+
+@pytest.mark.parametrize("payload", [{"admin": True}, {"comfort": "false"}, {"category": "dress"}, {"colour": None},
                                     {"budget_max": float("inf")}, {"budget_max": -1},
                                     {"budget_min": 2000, "budget_max": 1000}, {"brand": ["x"] * 11},
                                     {"normalized_query_en": "x" * 1001}])

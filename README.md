@@ -63,7 +63,7 @@ Higher is better. P@10 measures relevant results; NDCG rewards placing the most 
 - **The largest gain came from understanding intent and enforcing constraints.** Hybrid + filters is the useful comparison for judging the extra ranking logic.
 - **Context and visual ranking improved ordering.** Adaptive weights alone added 0.013 NDCG@10 over fixed weights; the gain is modest.
 - **The original native run reached roughly 22 searches/s on 2 vCPU.** At 100K products, single-user P95 latency was 248 ms; in-memory BM25 became the scaling bottleneck.
-- **Current security checks:** 31 tests passed for image restrictions, output validation, hard-constraint preservation and explanation rejection. Live CDN/provider validation remains pending.
+- **Current verification:** 44 focused security/ranking tests passed. [Live Groq smoke checks](docs/LLM_LIVE.md) passed 14/14 checks, including five languages, constraint preservation, approved explanations and fallback. Full-stack LLM relevance and live CDN validation remain pending.
 
 Full results, ablations and caveats: [Evaluation](docs/EVALUATION.md). Growth measurements and
 proposed deployment: [Scaling](docs/SCALING.md).
@@ -102,7 +102,7 @@ Earlier UI captures illustrate the interface; they predate the security changes 
 ## What needs improvement
 
 The main priorities are independent human judgments on real products, broader multilingual
-parsing (including negation and ambiguous categories), live LLM/CDN and Docker validation, and
+parsing (including negation and ambiguous categories), provider-backed relevance evaluation, live CDN/Docker validation, and
 stronger event recovery and cache/index consistency. The system still uses one admin key and
 needs deployment authentication, TLS and shared rate limits before public exposure.
 

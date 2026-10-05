@@ -53,7 +53,7 @@ class Settings(BaseSettings):
     # ---- LLM (optional; free providers supported). "none" => deterministic rule engine only
     llm_provider: Literal["none", "openai_compat", "gemini", "ollama"] = "none"
     llm_base_url: str = "https://api.groq.com/openai/v1"
-    llm_model: str = "llama-3.1-8b-instant"
+    llm_model: str = "openai/gpt-oss-20b"
     llm_api_key: SecretStr | None = None
     llm_timeout_s: float = 6.0
     llm_explanations: bool = False  # polish template explanations with the LLM (grounding-checked)
