@@ -1,33 +1,27 @@
 flowchart TB
-  U([User<br/>EN · Tamil · Tanglish · Hindi<br/>text and/or image]) --> UI[Streamlit UI :8501<br/>pipeline view · compare · admin · health]
-  UI --> GW
-  subgraph API["Query path (stateless, horizontally scalable)"]
-    GW[Gateway / Query API :8000<br/>orchestration · timeouts · circuit breakers<br/>rate limit · response cache · tracing]
-    IN[Intent service :8001<br/>lang-ID → LLM decomposition*<br/>→ normalisation → rule fallback]
-    EM[Embedding service :8002<br/>multilingual-e5-small int8 ONNX<br/>OpenCLIP ViT-B/32 ONNX]
-    RT[Retrieval service :8003<br/>incremental BM25 + Qdrant ANN<br/>hard filters pushed down · RRF]
-    RK[Ranking service :8004<br/>constraints → context-adaptive fusion<br/>→ grounded explanations]
+  USER["Shopper / Streamlit UI<br/>Multilingual text + optional image"] --> GW["Gateway :8000<br/>Calls each service, caches responses<br/>Timeouts and degraded-mode fallbacks"]
+  GW --> SEARCH
+  subgraph SEARCH["Search data flow — gateway orchestrates each step"]
+    direction LR
+    IN["1. Intent<br/>Rules + validated LLM<br/>Hard constraints and context"] --> EM["2. Embedding<br/>e5 + CLIP vectors<br/>Restricted image loading"]
+    EM --> RT["3. Retrieval<br/>BM25 + Qdrant / RRF<br/>Filter candidates"]
+    RT --> RK["4. Ranking<br/>Context-adaptive signals<br/>Approved explanations"]
   end
-  GW -->|1 parse| IN
-  GW -->|2 embed query / image| EM
-  GW -->|3 retrieve + filters| RT
-  GW -->|4 rerank + explain| RK
-  IN -.->|optional, free tier| LLM[(LLM: Groq / Gemini /<br/>OpenRouter / Ollama)]
-  RK -.->|optional polish,<br/>grounding-checked| LLM
-  subgraph DATA["Catalogue path (event-driven, incremental)"]
-    CAT[Catalogue service :8005<br/>CRUD · validation · enrichment<br/>transactional outbox]
-    IDX[Indexer worker :8006<br/>batch embed text+image<br/>upsert / delete points]
+  SEARCH --> OUT["Catalogue results<br/>Scores, explanations, timings and degraded flags"]
+  SEARCH -. "intent / ranking only" .-> LLM["Optional LLM<br/>Untrusted output"]
+  SEARCH <-->|"retrieval reads vectors"| QD[("Qdrant")]
+  subgraph CATALOGUE["Asynchronous catalogue updates"]
+    direction LR
+    ADMIN["Admin / feed"] -->|"admin key"| CAT["Catalogue :8005"]
+    CAT --> PG[("PostgreSQL<br/>Products + outbox")]
+    PG -->|"relay"| RS[("Redis Streams")]
+    RS --> IDX["Indexer :8006<br/>Embed, upsert / delete"]
   end
-  ADM([Merchandiser / feed]) -->|ADD · UPDATE · DELETE| GW
-  GW -->|admin proxy| CAT
-  CAT --> PG[(PostgreSQL<br/>products JSONB + outbox)]
-  CAT -->|outbox relay| RS[(Redis Streams<br/>catalogue.events)]
-  RS -->|group: indexer| IDX
-  RS -->|group per replica| RT
-  IDX --> EM
-  IDX --> QD[(Qdrant<br/>named vectors: text 384 · image 512<br/>payload indexes for filters)]
-  RT --> QD
-  GW <--> RC[(Redis cache<br/>responses keyed by catalogue version)]
-  EM <--> RC
-  classDef store fill:#eef,stroke:#557;
-  class PG,RS,QD,RC,LLM store;
+  CATALOGUE -->|"incremental vector updates"| QD
+  CATALOGUE -->|"events update BM25 / indexer calls embedding"| SEARCH
+  classDef service fill:#eff6ff,stroke:#2563eb,color:#172554;
+  classDef storage fill:#f1f5f9,stroke:#64748b,color:#0f172a;
+  classDef boundary fill:#fff7ed,stroke:#c2410c,color:#7c2d12;
+  class IN,EM,RT,RK,GW,CAT,IDX service;
+  class PG,RS,QD storage;
+  class LLM,ADMIN boundary;

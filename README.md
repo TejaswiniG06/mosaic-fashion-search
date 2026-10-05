@@ -1,110 +1,121 @@
 # MOSAIC-Fashion
-**M**ultilingual **O**ccasion- and **S**eason-**A**ware **I**ntent-**C**onditioned fashion recommendation.
 
-A production-oriented microservice system for semantic fashion search. You can ask the way you would ask a shop assistant,
-in **English, Tamil, Tanglish (Tamil-English code-mix), Hindi or Hinglish**, with text and/or a reference image:
+**Fashion search that understands the occasion, language and constraints behind a request.**
+
+MOSAIC means **Multilingual Occasion- and Season-Aware Intent-Conditioned** fashion recommendation.
+It is a production-oriented microservice prototype: users describe what they need in English,
+Tamil, Tanglish, Hindi or Hinglish, optionally with a reference image. Results come from the
+catalogue, with explanations and visible ranking signals. No paid API is required; the LLM is optional.
+
+## The problem
+
+A shopper asks, **“I need an outfit to go to the beach this summer.”** Keyword search may miss
+suitable products whose titles never mention a beach. Similarity alone can also return an item
+that exceeds the budget or is unavailable in the requested size.
+
+MOSAIC separates **constraints to enforce** from **preferences to rank**. It combines multilingual
+query understanding, semantic and keyword retrieval, visual similarity, and context-aware ranking.
+
+## A search walkthrough
 
 > `Chennai summer ku comfortable cotton dress venum under 2000`
-> `கல்யாணத்துக்கு சிவப்பு பட்டு புடவை` · `शादी के लिए लाल लहंगा 15000 से कम` · `I need an outfit to go to the beach this summer`
 
-It returns products **only from the catalogue**. Each result comes with its match score, per-signal score breakdown, the
-query-dependent weights (with the reasons for them), the hard constraints it satisfies, and a grounded explanation.
+1. **Understand:** detect Tanglish; extract dress, cotton, comfort, Chennai, summer and a ₹2,000 ceiling. Resolve Chennai + summer to a hot, humid climate.
+2. **Filter:** enforce the recognised budget, explicit category, size/gender when applicable, and stock availability. Rules own hard constraints; optional validated LLM output adds semantic context.
+3. **Retrieve:** combine multilingual e5 vectors and BM25 keyword matches using reciprocal rank fusion. CLIP adds visual signals; a reference image can also retrieve similar images.
+4. **Rank:** adjust the importance of semantic, lexical, visual, occasion, climate, material and comfort signals for this query. Missing image evidence is handled explicitly.
+5. **Explain:** return catalogue products with scores, constraint checks and template explanations. Optional LLM output may only select approved template sentences. If nothing matches, offer constraint-relaxation suggestions.
 
-![architecture](docs/diagrams/architecture.png)
+The API also returns the parsed intent, component timings and degraded-mode flags, so a reviewer
+can see how a result was produced. [Detailed query flow](docs/ARCHITECTURE.md#query-path).
 
-## What's inside
-| capability | how |
-|---|---|
-| Multilingual NLU | script + code-mix language ID → optional **free** LLM decomposition (Groq / Gemini / OpenRouter / Ollama) → normalisation onto a canonical vocabulary → deterministic multilingual rule parser (fallback, and always used for numbers) |
-| Structured intent | category, occasion, season, climate (destination-aware: Chennai→hot-humid, Manali→cold, Delhi depends on season), comfort, style, material, colour, pattern, budget, size, gender, destination, sustainability |
-| Retrieval | multilingual **e5** dense (Qdrant HNSW) + incremental **BM25** + **RRF** hybrid; hard filters pushed into both channels |
-| Multimodal | OpenCLIP ViT-B/32 image vectors per product; text→image and image→image similarity; query-by-image |
-| **Contribution: context-adaptive ranking** | 7 signals (semantic, lexical, visual, occasion, climate, material, comfort). Weights are a **function of the decomposed intent**: e.g. image query → visual ×3.5; Chennai+summer+cotton+comfort → climate ×2.07, material ×1.8, comfort ×1.7; code-mixed query → lexical ×0.6. Signals with no evidence are switched off, and a missing image is renormalised per item |
-| Hard constraints | price, stock, size, explicit category and gender are **filters**, not similarity |
-| Constrained LLM use | Strict, bounded JSON validation for fresh and cached intent output; canonical vocabulary normalisation; rules own hard budget, size, gender and explicit category constraints. Optional explanations select ordered complete sentences from the approved template; rewritten or added claims retain the template |
-| Safe image handling | Embedding-service downloads require approved HTTPS hosts and public DNS answers; connections are IP-pinned with hostname TLS verification. Redirects are rejected, local paths stay inside `IMAGE_ROOT`, and byte/pixel limits bound image loading |
-| Evolving catalogue | ADD / UPDATE / DELETE → Postgres + **transactional outbox** → Redis Streams → incremental Qdrant upserts and BM25 deltas. **No rebuilds.** Measured time-to-searchable ≈ **0.2 s** (lexical) / **0.25 s** (dense) |
-| Reliability | health/readiness on every service, structured JSON logs with request IDs, Prometheus metrics, timeouts/retries/circuit breakers, explicit degraded modes (LLM→rules, vector→BM25, image→text, ranking→retrieval order), validation, admin key, `.env` config |
-| Evaluation | 120 multilingual queries; BM25 / Dense / Hybrid / MOSAIC + 6 ablations; P@5/10, R@10, NDCG@10, MRR, MAP, HitRate, constraint satisfaction; significance tests; load, scale and fault-injection tests |
+## How the system fits together
 
-Everything is **free and open-source**: models (MIT), Qdrant, PostgreSQL, Redis, FastAPI, Streamlit, ONNX Runtime. No paid API is needed.
+![Current MOSAIC architecture showing search services, optional LLM and catalogue indexing](docs/diagrams/architecture.png)
 
-## Quick start
-**Windows, no Docker:** install Python 3.12, then double-click `setup_windows.bat` once and `start_windows.bat`. See [docs/WINDOWS.md](docs/WINDOWS.md). Any OS without Docker: `python scripts/launcher.py setup` then `python scripts/launcher.py start`.
+FastAPI services separate query orchestration, intent, embedding, retrieval and ranking from the
+catalogue write path. PostgreSQL stores products; a transactional outbox publishes changes to
+Redis Streams; consumers update Qdrant and the in-memory BM25 index incrementally. Updates are
+asynchronous, so index freshness is measured rather than assumed.
 
-With Docker:
+Health endpoints, Prometheus metrics, request IDs, timeouts, retries and fallbacks expose system
+behavior. Image loading in the embedding service restricts remote hosts and local paths and
+bounds bytes/pixels. Strict LLM contracts protect hard constraints and explanation output.
+See [Architecture](docs/ARCHITECTURE.md), [Design decisions](docs/DESIGN_DECISIONS.md) and [Security](docs/SECURITY.md).
+
+## What the evaluation shows
+
+**Historical baseline:** 5,000 synthetic products, 30 information needs translated into four
+languages (120 queries). These measurements predate security commit `29901c6`; current-version
+relevance and performance reruns are pending. Synthetic labels share a vocabulary with the system,
+so the scores do not establish real-world quality.
+
+| System | Relevant items in top 10 (P@10) | Ranking quality (NDCG@10) | Constraints satisfied |
+|---|---:|---:|---:|
+| BM25 keyword search | 0.346 | 0.306 | 0.361 |
+| Dense semantic search | 0.378 | 0.331 | 0.438 |
+| Hybrid retrieval | 0.471 | 0.412 | 0.521 |
+| Hybrid + intent filters | 0.932 | 0.840 | 0.983 |
+| **MOSAIC** | **0.954** | **0.916** | **0.983** |
+
+Higher is better. P@10 measures relevant results; NDCG rewards placing the most relevant results first.
+
+- **The largest gain came from understanding intent and enforcing constraints.** Hybrid + filters is the useful comparison for judging the extra ranking logic.
+- **Context and visual ranking improved ordering.** Adaptive weights alone added 0.013 NDCG@10 over fixed weights; the gain is modest.
+- **The original native run reached roughly 22 searches/s on 2 vCPU.** At 100K products, single-user P95 latency was 248 ms; in-memory BM25 became the scaling bottleneck.
+- **Current security checks:** 31 tests passed for image restrictions, output validation, hard-constraint preservation and explanation rejection. Live CDN/provider validation remains pending.
+
+Full results, ablations and caveats: [Evaluation](docs/EVALUATION.md). Growth measurements and
+proposed deployment: [Scaling](docs/SCALING.md).
+
+## Try it
+
+**Windows without Docker:** install Python 3.12, run `setup_windows.bat` once, then
+`start_windows.bat`. [Windows guide](docs/WINDOWS.md).
+
+**Docker setup:**
+
 ```bash
-./scripts/download_models.sh                         # free models (e5 int8 ONNX, OpenCLIP → ONNX)
-python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
+./scripts/download_models.sh
+python3 -m venv .venv
+.venv/bin/pip install -r requirements-dev.txt
 PYTHONPATH=libs:. .venv/bin/python -m ingestion.synthetic_catalogue --n 5000 --out data --render
 cp .env.example .env
-docker compose up -d --build && docker compose run --rm seed
-# UI → http://localhost:8501     API → http://localhost:8000/docs
-```
-Native run, real Amazon Reviews 2023 data, free LLM setup and every env var: **[docs/RUNNING.md](docs/RUNNING.md)**.
-
-## Results (measured, 5K-product catalogue, 120 queries; full tables in `evaluation/reports/`)
-These relevance, latency, scale, freshness and resilience measurements predate security commit
-`29901c6` (5 October 2026). They have not been rerun with the image restrictions and LLM safeguards;
-they are historical baseline results, not measurements of the current secured version.
-
-| System | P@10 | R@10 | NDCG@10 | MRR | MAP@10 | ConstraintSat@10 |
-|---|---|---|---|---|---|---|
-| BM25 | 0.346 | 0.047 | 0.306 | 0.395 | 0.309 | 0.361 |
-| Dense (e5) | 0.378 | 0.045 | 0.331 | 0.553 | 0.298 | 0.438 |
-| Hybrid (RRF) | 0.471 | 0.059 | 0.412 | 0.588 | 0.397 | 0.521 |
-| Hybrid + intent filters | 0.932 | 0.167 | 0.840 | 0.971 | 0.917 | 0.983 |
-| **MOSAIC** | **0.954** | **0.174** | **0.916** | 0.968 | **0.943** | 0.983 |
-
-NDCG@10 per language (MOSAIC / Hybrid): en 0.947 / 0.677 · ta 0.877 / 0.209 · tanglish 0.943 / 0.473 · hi 0.896 / 0.288.
-Ablations (ΔNDCG@10 vs full MOSAIC, all p ≤ 0.0002): fixed weights −0.013, no image −0.022, dense-only candidates −0.014,
-no context signals −0.086, no intent decomposition −0.532.
-Latency (2 vCPU, everything co-located): MOSAIC P50 81 ms / P95 111 ms with 1 user; it saturates at about 22 req/s with 0 errors.
-
-**Scale (live catalogue grown through the ADD path, measured at each size):**
-
-| products | MOSAIC NDCG@10 | MOSAIC P50 / P95 (ms) | time-to-searchable lexical / dense | ingest rate |
-|---|---|---|---|---|
-| 5K | 0.916 | 77 / 109 | 0.20 s / 0.25 s | ≈46 /s |
-| 20K | 0.921 | 109 / 135 | 0.26 s / 0.32 s | 42 /s |
-| 50K | 0.948 | 132 / 176 | 0.30 s / 0.19 s | 39 /s |
-| 100K | 0.951 | 176 / 248 | 0.54 s / 0.40 s | 27 /s |
-
-**Resilience drills** (kill intent / embedding / Qdrant / ranking, unreachable LLM, broken image): every query still got
-results with 0 HTTP errors and an explicit `degraded` flag, and recovered after restore (`evaluation/reports/fault_injection.md`).
-**Caveat:** relevance is judged on a synthetic catalogue (same schema as Amazon-2023), because HuggingFace was not
-reachable from the build sandbox. Read [docs/EVALUATION.md](docs/EVALUATION.md) for validity caveats and failure analysis.
-
-## Repository map
-```
-libs/mosaic_common/   shared: config, schemas (API contracts), fashion knowledge base (multilingual lexicons, climate & material model,
-                      product enrichment), filters, Qdrant wrapper, event bus, resilient HTTP client, service factory, logging
-services/
-  gateway/            public API + orchestration + fallbacks + cache + catalogue proxy + time-to-searchable
-  intent/             language ID, rule parser, LLM client (free providers), normaliser/merger
-  embedding/          ONNX e5 + CLIP encoders (torch-free; CLIP BPE ported), caches, image loading
-  retrieval/          incremental BM25, hybrid RRF, signal completion, stream consumer
-  ranking/            signals, context-adaptive weights, grounded explanations
-  catalogue/          Postgres CRUD + transactional outbox relay
-  indexer/            event-driven incremental vector indexing
-ui/streamlit_app.py   pipeline view · mode comparison · catalogue admin · health
-ingestion/            synthetic Amazon-2023-schema generator, image renderer, Amazon adapter, image downloader, bulk loader
-evaluation/           query set, judge, metrics, offline eval + ablations, load test, scale test, fault injection, reports/
-tests/                unit (no stack) + integration (live stack) tests
-docker/, docker-compose.yml, Makefile, scripts/   deployment & ops
-docs/                 ARCHITECTURE · DESIGN_DECISIONS · EVALUATION · SCALING · RUNNING · diagrams/
+docker compose up -d --build
+docker compose run --rm seed
 ```
 
-## Screenshots
-| pipeline view (Tanglish query) | BM25 / Dense / Hybrid / MOSAIC comparison |
+Open the UI at **http://localhost:8501** or API docs at **http://localhost:8000/docs**.
+Try the Tanglish query above, compare BM25/Dense/Hybrid/MOSAIC, then add or update a catalogue
+item and inspect its search visibility. Docker end-to-end validation is still pending;
+reported measurements used the native stack. [Running guide](docs/RUNNING.md) covers native setup,
+Amazon data, optional LLM providers and trusted image-host configuration.
+
+### Demo captures
+
+Earlier UI captures illustrate the interface; they predate the security changes and do not verify those protections.
+
+| Parsed query and ranking signals | Retrieval comparison |
 |---|---|
-| ![search](docs/screenshots/search_tanglish.png) | ![compare](docs/screenshots/compare.png) |
+| ![Earlier Tanglish search demo](docs/screenshots/search_tanglish.png) | ![Earlier comparison demo](docs/screenshots/compare.png) |
 
-## Docs
-* [Architecture](docs/ARCHITECTURE.md): components, query and catalogue flows, signals, contracts
-* [Design decisions](docs/DESIGN_DECISIONS.md): why each choice, trade-offs, what would change it
-* [Evaluation](docs/EVALUATION.md): methodology, results, ablations, failure analysis, caveats
-* [Scaling](docs/SCALING.md): measured 5K→100K, plan for millions
-* [Running](docs/RUNNING.md): Docker / native, Amazon data, free LLMs, env vars, API examples
-* [Limitations](docs/LIMITATIONS.md): what is not done or not verified, and the next steps
-* [Security](docs/SECURITY.md): bounded image loading, SSRF protections, strict LLM output contracts and security tests
+## What needs improvement
+
+The main priorities are independent human judgments on real products, broader multilingual
+parsing (including negation and ambiguous categories), live LLM/CDN and Docker validation, and
+stronger event recovery and cache/index consistency. The system still uses one admin key and
+needs deployment authentication, TLS and shared rate limits before public exposure.
+
+For larger catalogues, move lexical retrieval out of process and add version-safe distributed
+indexing. With interaction data, evaluate a learned ranker and diversity against the current
+interpretable rules. [Known limitations and next steps](docs/LIMITATIONS.md).
+
+## Find your way around
+
+| Location | Purpose |
+|---|---|
+| `services/` | Gateway, intent, embedding, retrieval, ranking, catalogue and indexer |
+| `libs/mosaic_common/` | Shared schemas, configuration, filters and event/HTTP utilities |
+| `ingestion/` and `ui/` | Catalogue adapters/generator and Streamlit demo |
+| `evaluation/` and `tests/` | Reports, evaluation scripts and automated checks |
+| `docs/` | Architecture, decisions, operations, security and limitations |

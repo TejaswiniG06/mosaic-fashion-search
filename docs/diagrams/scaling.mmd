@@ -1,27 +1,30 @@
 flowchart TB
-  subgraph Edge
-    CDN[CDN / API gateway<br/>auth · WAF · rate limits]
+  TITLE["PROPOSED SCALE DEPLOYMENT<br/>Future design; not the current implementation"]
+  EDGE["Edge gateway<br/>TLS, authentication, WAF and shared rate limits"]
+  TITLE --> EDGE
+  subgraph QUERY["Replicated search tier"]
+    GW["Gateway replicas"]
+    IN["Intent replicas<br/>Validated LLM output; cached calls"]
+    EM["Embedding replicas<br/>Safe image loading; CPU/GPU batching"]
+    RT["Retrieval replicas<br/>External lexical index"]
+    RK["Ranking replicas<br/>Constraint checks and approved explanations"]
+    GW --> IN & EM & RT & RK
   end
-  subgraph Query["Query tier (k8s HPA on CPU + p95)"]
-    GW1[gateway ×N]
-    IN1[intent ×N<br/>LLM calls behind cache + budget]
-    EM1[embedding ×N<br/>CPU ONNX or GPU Triton; batching]
-    RT1[retrieval ×N<br/>stateless; BM25 via OpenSearch]
-    RK1[ranking ×N]
+  EDGE --> GW
+  RT --> QD[("Qdrant cluster<br/>Shards and replicas")]
+  RT --> OS[("OpenSearch or sparse-vector index")]
+  GW <--> CACHE[("Redis cluster")]
+  subgraph INGEST["Distributed catalogue processing"]
+    PG[("Catalogue DB + transactional outbox")]
+    BUS[("Partitioned event bus<br/>Per-product ordering and recovery")]
+    IX["Indexer workers<br/>Version-safe writes; batch embedding"]
+    BACK["Backfill / model migration<br/>Blue-green index switch"]
+    PG --> BUS --> IX
+    IX --> EM
   end
-  subgraph Index["Index tier"]
-    QD1[(Qdrant cluster<br/>shards × replicas<br/>scalar/PQ quantisation<br/>on-disk vectors)]
-    OS[(OpenSearch / Qdrant sparse vectors<br/>sharded BM25)]
-  end
-  subgraph Ingest["Ingestion tier"]
-    K[(Kafka / Redis Streams<br/>partitioned by product id)]
-    IX[indexer workers ×M<br/>GPU batch embedding]
-    BF[backfill job<br/>Spark/Ray for full re-embeds<br/>blue-green collection alias]
-  end
-  PG1[(Postgres primary + read replicas<br/>or managed catalogue DB)]
-  RC1[(Redis cluster<br/>query/embedding cache)]
-  CDN --> GW1 --> IN1 & EM1 & RT1 & RK1
-  RT1 --> QD1 & OS
-  GW1 <--> RC1
-  PG1 -->|CDC / outbox| K --> IX --> QD1 & OS
-  BF --> QD1
+  IX --> QD & OS
+  BACK --> QD & OS
+  classDef proposed fill:#f8fafc,stroke:#64748b,color:#0f172a;
+  classDef note fill:#fff7ed,stroke:#c2410c,color:#7c2d12;
+  class TITLE note;
+  class EDGE,GW,IN,EM,RT,RK,PG,BUS,IX,BACK,QD,OS,CACHE proposed;

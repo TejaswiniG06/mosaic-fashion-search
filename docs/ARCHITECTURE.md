@@ -2,7 +2,9 @@
 
 ![architecture](diagrams/architecture.png)
 
-Sources: `docs/diagrams/*.mmd` (Mermaid) → rendered `*.svg` / `*.png`.
+The overview shows query data dependencies. The gateway calls each search service;
+the search services do not call one another in a chain. Catalogue indexing runs
+asynchronously alongside searches. The scaling diagram describes a proposed deployment.
 
 ## Components
 | service | port | responsibility | key code |
@@ -63,9 +65,25 @@ use the existing text-only fallback.
 The ranking service creates the template first. If LLM explanations are enabled,
 the model may select complete template sentences in their original order. The
 validator uses only that template as evidence, not the user's requested attributes
-or raw catalogue text. Invalid selections retain the template. This is the current
-meaning of the optional explanation step in the high-level diagrams.
+or raw catalogue text. Invalid selections retain the template.
 
 These controls do not authenticate catalogue metadata, correct parser mistakes or
 guarantee immunity to prompt injection in soft ranking signals. See
 [Security](SECURITY.md) for scope and [Running](RUNNING.md) for configuration.
+
+## Updating the diagrams
+
+Edit `docs/diagrams/*.mmd`, then regenerate the committed SVG and PNG files.
+The renderer uses Mermaid 11.17.2 and Playwright 1.63.0 as optional documentation
+tools, installed separately from the application's dependencies:
+
+```bash
+npm install --prefix ../mosaic-diagram-tools mermaid@11.17.2 playwright@1.63.0
+npx --prefix ../mosaic-diagram-tools playwright install chromium
+node scripts/render_diagrams.mjs --modules ../mosaic-diagram-tools/node_modules
+```
+
+To use an existing Chrome or Edge installation, skip the browser installation and
+pass `--browser "/absolute/path/to/browser"`. Review the generated images for
+readability before committing. Keep demo screenshots as actual UI captures and
+state which version they represent.

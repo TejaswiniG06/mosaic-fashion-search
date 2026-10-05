@@ -1,27 +1,31 @@
 sequenceDiagram
   autonumber
   participant A as Admin / feed
-  participant C as Catalogue svc
+  participant C as Catalogue
   participant P as PostgreSQL
-  participant S as Redis Stream
+  participant S as Redis Streams
   participant X as Indexer
   participant E as Embedding
   participant Q as Qdrant
-  participant R as Retrieval (BM25)
-  A->>C: POST/PUT/PATCH/DELETE /products
-  C->>C: validate (Pydantic) · enrich attributes from text
-  C->>P: BEGIN · upsert row (version+1) · INSERT outbox event · COMMIT
-  C-->>A: 201/200 (write ack ~12 ms)
-  loop outbox relay (FOR UPDATE SKIP LOCKED)
-    C->>S: XADD catalogue.events · INCR catalogue_version (invalidates search cache)
+  participant R as Retrieval / BM25
+  A->>C: Product add, update or delete (admin key)
+  C->>C: Validate and enrich attributes
+  C->>P: Product mutation + outbox event in one transaction
+  C-->>A: Write acknowledgement
+  P-->>C: Pending outbox events
+  C->>S: Publish events, advance catalogue cache version
+  Note over C,R: Cache version changes before asynchronous indexes finish applying events
+  par Vector index
+    S->>X: Read batch in indexer consumer group
+    X->>E: Embed product text and image
+    E->>E: Approved HTTPS host, public DNS and pinned connection
+    E->>E: No redirects, root-bounded local files, byte/pixel limits
+    E-->>X: Text + image vectors, or text-only fallback
+    X->>Q: Upsert / delete product points
+    X->>S: Acknowledge processed events
+  and Lexical index
+    S->>R: Read events in per-replica consumer group
+    R->>R: Apply version-checked BM25 deltas
+    R->>S: Acknowledge processed events
   end
-  par fan-out
-    S->>X: XREADGROUP indexer (batch max 64)
-    X->>E: e5 passage vectors + CLIP image vectors (cached by image hash, missing image => text-only)
-    X->>Q: upsert / delete points (wait=true)
-    X->>S: XACK
-  and
-    S->>R: XREADGROUP retrieval-<replica>
-    R->>R: BM25 postings delta (version-checked, idempotent)
-  end
-  Note over A,R: measured time-to-searchable ~0.2 s lexical / 0.25 s dense (5K catalogue)
+  Note over A,R: Historical 5K baseline: about 0.2 s lexical / 0.25 s dense freshness, secured-version rerun pending
