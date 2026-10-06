@@ -4,8 +4,10 @@
 
 ## What was actually measured
 The measurements below predate security commit `29901c6` (5 October 2026). Scale,
-ingestion and latency have not been remeasured with the image restrictions and
-LLM safeguards; use these as historical baseline results.
+ingestion and latency tables describe the historical multi-size run. That 5K–100K
+scale protocol has not been repeated with the safeguards. A new 5K-product
+[native rules/Groq evaluation](LLM_STACK_EVALUATION.md) measures relevance and
+short load behavior separately; it does not validate larger sizes.
 
 `evaluation/scale_test.py` grows the **live** catalogue through the normal ADD path and measures ingestion rate,
 time-to-searchable, latency, relevance and memory at each size. Results: `evaluation/reports/scale_test.md`.

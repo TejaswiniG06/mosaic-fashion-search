@@ -18,6 +18,7 @@ stop_windows.bat
 
 ### How it works without Docker
 * **Catalogue database:** SQLite (`data\catalogue.db`, set by `CATALOGUE_DB=sqlite` in `.env`), with the same transactional-outbox guarantees as PostgreSQL. Nothing to install.
+  If `.env` already exists (for example, after configuring Groq), set `CATALOGUE_DB=sqlite` explicitly before starting; setup preserves existing settings.
 * **Qdrant:** the official portable `qdrant.exe`, downloaded to `tools\qdrant\`. Its data is kept in `data\qdrant_storage\`.
 * **Redis:** the portable Redis-for-Windows build, downloaded to `tools\redis\`.
 * All services run in the background without console windows. Their logs are in `logs\*.log`.

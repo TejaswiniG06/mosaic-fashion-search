@@ -1,14 +1,16 @@
 # Known limitations & next steps
 
-Published relevance, load, scale, freshness and resilience numbers predate security
-commit `29901c6` (5 October 2026). They have not been rerun on the secured version.
+Earlier multi-system, scale, freshness and resilience tables predate security
+commit `29901c6`. The new [native full-stack rules/Groq comparison](LLM_STACK_EVALUATION.md)
+adds current synthetic relevance and short load measurements; it does not replace
+the historical scale or fault-drill reports.
 
 | # | limitation | impact | next step |
 |---|---|---|---|
 | 1 | Relevance numbers come from a **synthetic catalogue** in the Amazon-2023 schema. The build sandbox could not reach HuggingFace or Amazon's image CDN. | Absolute scores are optimistic (see EVALUATION.md caveats). Relative ordering and ablations are the meaningful part. | Run `make amazon` + `make seed` on real `meta_Amazon_Fashion.jsonl`. Collect human judgments for a 100-query real-data test set. |
-| 2 | The **LLM path** is unit-tested and has live Groq smoke-check evidence; provider-backed relevance and full-stack evaluation remain pending. | Historical relevance results use rules. The LLM cannot replace an incorrect explicit rule category or supply hard numeric/size/gender constraints. | Rerun relevance with the provider enabled. Improve rule-category coverage separately; evaluate improvements to soft semantic slots. |
-| 3 | `docker compose config` validates, but images could **not be built/pulled** in the sandbox (Docker Hub blocked). All measurements are from the native run (`scripts/run_local.sh`). | Compose is untested end-to-end here. | `docker compose up --build` on a normal machine. |
-| 4 | **Rule lexicon coverage**: e.g. Tamil "ஷூ" and Hindi "जूते" map to *sneakers*, so "formal shoes" in Tamil/Hindi gets the wrong hard category filter (NDCG 0). "sangeet" and Tamil "ஆர்கானிக்" are missing. | Hard filters amplify parser mistakes. | Relax the category filter when parser confidence is low, or when the filtered pool is tiny. Expand the lexicon from query logs. Use the LLM path. |
+| 2 | Groq is verified through the native stack, but showed no significant overall gain on 120 synthetic queries; fresh-call P95 was 3.27 s versus 305 ms with rules. | LLM usefulness varies by query. It cannot replace an incorrect explicit rule category or supply hard numeric/size/gender constraints. | Keep it optional; collect independent real-data judgments and examine gains/losses before enabling it by default. |
+| 3 | Compose has not been validated end-to-end. The latest full-stack evaluation used native Windows with SQLite, Redis and Qdrant. | The PostgreSQL/Docker deployment still needs its own validation. | Build and run Compose, seed the catalogue and repeat health, CRUD and search checks. |
+| 4 | **Rule lexicon coverage**: e.g. Tamil "ஷூ" and Hindi "जूते" map to *sneakers*, so "formal shoes" in Tamil/Hindi gets the wrong hard category filter (NDCG 0). "sangeet" and Tamil "ஆர்கானிக்" are missing. | Hard filters amplify parser mistakes; LLM output cannot replace explicit rule categories. | Design confidence-aware category relaxation and expand the lexicon using separate development data. |
 | 5 | **In-process BM25** grows linearly (2.8 ms at 5K → 65 ms at 100K) and holds all docs in RAM (≈1 GB at 100K). | Becomes the bottleneck beyond about 200K items. | OpenSearch, or Qdrant sparse vectors / SPLADE. That also makes the retrieval service stateless. |
 | 6 | Ranking weights are **hand-set rules** (an interpretable prior). There is no click/purchase data for learning-to-rank. | Adaptive vs fixed gain is real but small (+0.013 NDCG@10). | Log signal vectors with interactions, train LambdaMART, and A/B test behind the same API. |
 | 7 | CLIP ViT-B/32 is English-only and the product images are **procedural renders**. | The visual signal is validated for colour/pattern/silhouette, not for real photos or fine style. | Real photos via `ingestion/download_images.py`; consider a multilingual CLIP or SigLIP. |

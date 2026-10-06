@@ -5,6 +5,11 @@ On **5 October 2026**, the final Groq `openai/gpt-oss-20b` smoke run passed
 provider connection and the exercised intent/explanation paths. It does not
 establish full-stack search quality or general prompt-injection immunity.
 
+A subsequent [full-stack rules/Groq evaluation](LLM_STACK_EVALUATION.md) now covers
+120 synthetic queries, fresh-call latency, cached-intent throughput and real
+end-to-end explanation samples. It found no significant overall relevance gain.
+The smoke checks below remain separate security/integration evidence.
+
 | Check | Final result |
 |---|---|
 | One intent query each in English, Tamil, Tanglish, Hindi and Hinglish | 5/5 used `llm+rules`, with expected category/material and preserved rule constraints |

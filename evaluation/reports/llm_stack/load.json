@@ -1,0 +1,689 @@
+{
+  "meta": {
+    "generated_at": "2026-10-05T16:09:17.509668+00:00",
+    "api": "http://127.0.0.1:8000",
+    "base_commit": "04d83900fc6c46e9130c5b2d0812b2699345ab49",
+    "host": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "logical_cpus": 12,
+      "ram_gib": 15.44
+    },
+    "catalogue_size": 5000,
+    "provider": "openai_compat",
+    "model": "openai/gpt-oss-20b",
+    "deployment": "native Windows / SQLite / Redis / Qdrant",
+    "intent_call_spacing_s": 8.0,
+    "response_cache": false,
+    "explanations_in_relevance_and_load": false,
+    "status": {
+      "ready": {
+        "intent": true,
+        "embedding": true,
+        "retrieval": true,
+        "ranking": true,
+        "catalogue": true
+      },
+      "breakers": {
+        "intent": "closed",
+        "embedding": "closed",
+        "retrieval": "closed",
+        "ranking": "closed",
+        "catalogue": "closed"
+      },
+      "catalogue_stats": {
+        "products": 5000,
+        "outbox_pending": 0,
+        "by_category": {
+          "kurta": 305,
+          "t-shirt": 277,
+          "shirt": 270,
+          "dress": 266,
+          "saree": 243,
+          "top": 191,
+          "jeans": 174,
+          "salwar-suit": 170,
+          "juttis": 163,
+          "sweater": 163,
+          "kurti": 157,
+          "shorts": 157,
+          "palazzo": 153,
+          "blazer": 147,
+          "sneakers": 143,
+          "lehenga": 140,
+          "nightwear": 132,
+          "trousers": 131,
+          "scarf": 129,
+          "swimwear": 129,
+          "jacket": 125,
+          "skirt": 125,
+          "coat": 123,
+          "heels": 123,
+          "sherwani": 123,
+          "boots": 119,
+          "hat": 119,
+          "formal-shoes": 117,
+          "veshti": 115,
+          "hoodie": 92,
+          "sandals": 91,
+          "activewear": 88
+        },
+        "backend": "sqlite",
+        "catalogue_version": 5003
+      },
+      "retrieval_stats": {
+        "bm25_docs": 5000,
+        "bm25_terms": 355,
+        "qdrant_points": 5000,
+        "warm": true,
+        "stream_lag": {
+          "pending": 0,
+          "lag": 0
+        }
+      },
+      "intent_stats": {
+        "llm_provider": "openai_compat",
+        "llm_model": "openai/gpt-oss-20b",
+        "languages": [
+          "en",
+          "ta",
+          "tanglish",
+          "hi",
+          "hinglish"
+        ]
+      },
+      "embedding_stats": {
+        "text_model": "e5-small-a75bf7248678",
+        "text_dim": 384,
+        "clip_model": "openclip-vitb32-835b51410287",
+        "clip_dim": 512,
+        "runtime": "onnxruntime-cpu"
+      }
+    },
+    "source_sha256": {
+      "evaluation/evaluate_llm_stack.py": "a814dac7c5e8283c8ca8623dc86f21fafbacd41d198a3406cd043261b170651d",
+      "evaluation/load_test.py": "a06a6c5f80a6690bc60a61db0278359fd743a9939e5a74f651dd10144ff6983c",
+      "services/intent/llm.py": "ca0272506a3a6f222ed1058889a7b73d5b85ff4a6ecf058474a9ca67f762bc69"
+    },
+    "dataset_sha256": {
+      "data/catalogue.jsonl": "de4fbc87175fa12a22b7e87b49fcdb1f90f9542c6872a464af70934365c7c583",
+      "data/ground_truth.jsonl": "a2ba93f34ba11ea018daf1a2cc12327141fa6c4d57fd7ab69f81db219d70221e",
+      "evaluation/queries/needs.jsonl": "c77b9eefbbce01a1e6589e59b844b99e73a35ef0a2b667295818ab6b3f329be4"
+    },
+    "runtime_versions": {
+      "onnxruntime": "1.30.0",
+      "tokenizers": "0.23.2",
+      "numpy": "2.5.3",
+      "qdrant-client": "1.19.1",
+      "redis": "8.1.0",
+      "fastapi": "0.142.2",
+      "httpx": "0.28.1"
+    },
+    "model_sha256": {
+      "e5": "62a3bdc3f493d4c8bcdd076fbd0e0903e31991c00498231e74f1fa44d47712d2",
+      "clip_text": "952c2fc37a290d5b1989f115d764e4741090e3ecdb4e30828780b4396452e63b",
+      "clip_image": "3cca130c74f28d9caa1be4c0610e0fb2b9c698d31117ba418f2b6eba2b5b48c4"
+    }
+  },
+  "workload": "warm intent/embedding caches; response cache off; no explanation calls",
+  "query_count": 120,
+  "results": [
+    {
+      "concurrency": 1,
+      "mode": "mosaic",
+      "cache": false,
+      "requests": 166,
+      "duration_s": 20.1,
+      "throughput_rps": 8.26,
+      "error_rate": 0.0,
+      "errors": {},
+      "degraded_responses": 0,
+      "use_llm": false,
+      "explain": false,
+      "parser_counts": {
+        "rules": 166
+      },
+      "llm_fallbacks": 0,
+      "latency_ms": {
+        "p50": 121.5,
+        "p95": 148.6,
+        "p99": 154.3,
+        "mean": 120.8,
+        "max": 157.5
+      },
+      "components_ms": {
+        "embedding": {
+          "p50": 15.7,
+          "p95": 19.0,
+          "p99": 22.5
+        },
+        "intent": {
+          "p50": 7.7,
+          "p95": 9.3,
+          "p99": 11.1
+        },
+        "ranking": {
+          "p50": 8.1,
+          "p95": 11.3,
+          "p99": 24.2
+        },
+        "ranking.constraints": {
+          "p50": 0.0,
+          "p95": 0.1,
+          "p99": 0.1
+        },
+        "ranking.explain": {
+          "p50": 0.1,
+          "p95": 0.1,
+          "p99": 0.2
+        },
+        "ranking.fusion": {
+          "p50": 0.5,
+          "p95": 0.8,
+          "p99": 1.1
+        },
+        "ranking.signals": {
+          "p50": 0.2,
+          "p95": 0.5,
+          "p99": 0.6
+        },
+        "retrieval": {
+          "p50": 53.1,
+          "p95": 74.3,
+          "p99": 79.7
+        },
+        "retrieval.bm25": {
+          "p50": 3.2,
+          "p95": 10.1,
+          "p99": 11.4
+        },
+        "retrieval.dense_ann": {
+          "p50": 36.6,
+          "p95": 44.9,
+          "p99": 46.3
+        },
+        "retrieval.fusion": {
+          "p50": 0.4,
+          "p95": 0.7,
+          "p99": 0.8
+        },
+        "retrieval.signal_completion": {
+          "p50": 3.3,
+          "p95": 15.9,
+          "p99": 17.7
+        },
+        "total": {
+          "p50": 85.7,
+          "p95": 111.5,
+          "p99": 117.7
+        }
+      },
+      "system": "MOSAIC-rules",
+      "provider_attempts_during_load": 0
+    },
+    {
+      "concurrency": 1,
+      "mode": "mosaic",
+      "cache": false,
+      "requests": 163,
+      "duration_s": 20.1,
+      "throughput_rps": 8.13,
+      "error_rate": 0.0,
+      "errors": {},
+      "degraded_responses": 0,
+      "use_llm": true,
+      "explain": false,
+      "parser_counts": {
+        "llm+rules": 163
+      },
+      "llm_fallbacks": 0,
+      "latency_ms": {
+        "p50": 123.1,
+        "p95": 147.6,
+        "p99": 162.8,
+        "mean": 122.8,
+        "max": 169.8
+      },
+      "components_ms": {
+        "embedding": {
+          "p50": 16.0,
+          "p95": 18.6,
+          "p99": 20.0
+        },
+        "intent": {
+          "p50": 8.8,
+          "p95": 10.8,
+          "p99": 15.4
+        },
+        "ranking": {
+          "p50": 8.0,
+          "p95": 11.6,
+          "p99": 25.3
+        },
+        "ranking.constraints": {
+          "p50": 0.0,
+          "p95": 0.1,
+          "p99": 0.1
+        },
+        "ranking.explain": {
+          "p50": 0.1,
+          "p95": 0.1,
+          "p99": 0.2
+        },
+        "ranking.fusion": {
+          "p50": 0.5,
+          "p95": 0.9,
+          "p99": 1.0
+        },
+        "ranking.signals": {
+          "p50": 0.3,
+          "p95": 0.5,
+          "p99": 0.7
+        },
+        "retrieval": {
+          "p50": 52.0,
+          "p95": 70.6,
+          "p99": 77.9
+        },
+        "retrieval.bm25": {
+          "p50": 3.6,
+          "p95": 10.6,
+          "p99": 12.2
+        },
+        "retrieval.dense_ann": {
+          "p50": 34.7,
+          "p95": 44.6,
+          "p99": 46.7
+        },
+        "retrieval.fusion": {
+          "p50": 0.4,
+          "p95": 0.6,
+          "p99": 0.7
+        },
+        "retrieval.signal_completion": {
+          "p50": 3.3,
+          "p95": 13.1,
+          "p99": 16.9
+        },
+        "total": {
+          "p50": 86.8,
+          "p95": 109.7,
+          "p99": 117.2
+        }
+      },
+      "system": "MOSAIC-Groq",
+      "provider_attempts_during_load": 0
+    },
+    {
+      "concurrency": 4,
+      "mode": "mosaic",
+      "cache": false,
+      "requests": 475,
+      "duration_s": 20.2,
+      "throughput_rps": 23.5,
+      "error_rate": 0.0,
+      "errors": {},
+      "degraded_responses": 0,
+      "use_llm": false,
+      "explain": false,
+      "parser_counts": {
+        "rules": 475
+      },
+      "llm_fallbacks": 0,
+      "latency_ms": {
+        "p50": 158.9,
+        "p95": 227.5,
+        "p99": 403.0,
+        "mean": 169.7,
+        "max": 2763.9
+      },
+      "components_ms": {
+        "embedding": {
+          "p50": 13.2,
+          "p95": 26.1,
+          "p99": 37.4
+        },
+        "intent": {
+          "p50": 6.3,
+          "p95": 12.9,
+          "p99": 33.7
+        },
+        "ranking": {
+          "p50": 13.2,
+          "p95": 25.0,
+          "p99": 42.6
+        },
+        "ranking.constraints": {
+          "p50": 0.0,
+          "p95": 0.1,
+          "p99": 0.2
+        },
+        "ranking.explain": {
+          "p50": 0.1,
+          "p95": 0.1,
+          "p99": 0.3
+        },
+        "ranking.fusion": {
+          "p50": 0.6,
+          "p95": 1.0,
+          "p99": 1.6
+        },
+        "ranking.signals": {
+          "p50": 0.3,
+          "p95": 0.7,
+          "p99": 1.7
+        },
+        "retrieval": {
+          "p50": 86.5,
+          "p95": 142.0,
+          "p99": 182.2
+        },
+        "retrieval.bm25": {
+          "p50": 2.0,
+          "p95": 6.4,
+          "p99": 9.7
+        },
+        "retrieval.dense_ann": {
+          "p50": 42.5,
+          "p95": 75.1,
+          "p99": 101.6
+        },
+        "retrieval.fusion": {
+          "p50": 0.5,
+          "p95": 1.1,
+          "p99": 2.8
+        },
+        "retrieval.signal_completion": {
+          "p50": 10.1,
+          "p95": 38.7,
+          "p99": 63.3
+        },
+        "total": {
+          "p50": 125.4,
+          "p95": 192.2,
+          "p99": 371.5
+        }
+      },
+      "system": "MOSAIC-rules",
+      "provider_attempts_during_load": 0
+    },
+    {
+      "concurrency": 4,
+      "mode": "mosaic",
+      "cache": false,
+      "requests": 466,
+      "duration_s": 20.1,
+      "throughput_rps": 23.17,
+      "error_rate": 0.0,
+      "errors": {},
+      "degraded_responses": 0,
+      "use_llm": true,
+      "explain": false,
+      "parser_counts": {
+        "llm+rules": 466
+      },
+      "llm_fallbacks": 0,
+      "latency_ms": {
+        "p50": 161.6,
+        "p95": 226.0,
+        "p99": 306.7,
+        "mean": 172.0,
+        "max": 2210.0
+      },
+      "components_ms": {
+        "embedding": {
+          "p50": 13.8,
+          "p95": 25.1,
+          "p99": 35.3
+        },
+        "intent": {
+          "p50": 8.2,
+          "p95": 16.0,
+          "p99": 44.8
+        },
+        "ranking": {
+          "p50": 13.8,
+          "p95": 28.2,
+          "p99": 44.4
+        },
+        "ranking.constraints": {
+          "p50": 0.0,
+          "p95": 0.1,
+          "p99": 0.1
+        },
+        "ranking.explain": {
+          "p50": 0.1,
+          "p95": 0.2,
+          "p99": 0.3
+        },
+        "ranking.fusion": {
+          "p50": 0.6,
+          "p95": 1.1,
+          "p99": 2.5
+        },
+        "ranking.signals": {
+          "p50": 0.3,
+          "p95": 0.7,
+          "p99": 1.9
+        },
+        "retrieval": {
+          "p50": 85.8,
+          "p95": 133.9,
+          "p99": 157.7
+        },
+        "retrieval.bm25": {
+          "p50": 2.2,
+          "p95": 6.9,
+          "p99": 9.4
+        },
+        "retrieval.dense_ann": {
+          "p50": 42.4,
+          "p95": 73.7,
+          "p99": 97.5
+        },
+        "retrieval.fusion": {
+          "p50": 0.5,
+          "p95": 1.0,
+          "p99": 1.7
+        },
+        "retrieval.signal_completion": {
+          "p50": 10.9,
+          "p95": 41.0,
+          "p99": 69.3
+        },
+        "total": {
+          "p50": 126.6,
+          "p95": 191.0,
+          "p99": 262.5
+        }
+      },
+      "system": "MOSAIC-Groq",
+      "provider_attempts_during_load": 0
+    },
+    {
+      "concurrency": 8,
+      "mode": "mosaic",
+      "cache": false,
+      "requests": 548,
+      "duration_s": 20.2,
+      "throughput_rps": 27.16,
+      "error_rate": 0.0,
+      "errors": {},
+      "degraded_responses": 0,
+      "use_llm": false,
+      "explain": false,
+      "parser_counts": {
+        "rules": 548
+      },
+      "llm_fallbacks": 0,
+      "latency_ms": {
+        "p50": 277.8,
+        "p95": 410.5,
+        "p99": 577.6,
+        "mean": 293.1,
+        "max": 1168.5
+      },
+      "components_ms": {
+        "embedding": {
+          "p50": 22.4,
+          "p95": 58.9,
+          "p99": 77.5
+        },
+        "intent": {
+          "p50": 10.5,
+          "p95": 29.5,
+          "p99": 45.0
+        },
+        "ranking": {
+          "p50": 22.4,
+          "p95": 46.7,
+          "p99": 65.6
+        },
+        "ranking.constraints": {
+          "p50": 0.0,
+          "p95": 0.2,
+          "p99": 0.2
+        },
+        "ranking.explain": {
+          "p50": 0.1,
+          "p95": 0.4,
+          "p99": 0.5
+        },
+        "ranking.fusion": {
+          "p50": 0.6,
+          "p95": 2.0,
+          "p99": 3.9
+        },
+        "ranking.signals": {
+          "p50": 0.3,
+          "p95": 1.5,
+          "p99": 2.7
+        },
+        "retrieval": {
+          "p50": 172.4,
+          "p95": 282.9,
+          "p99": 346.9
+        },
+        "retrieval.bm25": {
+          "p50": 2.2,
+          "p95": 8.7,
+          "p99": 17.3
+        },
+        "retrieval.dense_ann": {
+          "p50": 81.1,
+          "p95": 138.8,
+          "p99": 173.6
+        },
+        "retrieval.fusion": {
+          "p50": 0.5,
+          "p95": 1.4,
+          "p99": 2.9
+        },
+        "retrieval.signal_completion": {
+          "p50": 24.4,
+          "p95": 72.1,
+          "p99": 110.4
+        },
+        "total": {
+          "p50": 236.3,
+          "p95": 362.1,
+          "p99": 521.6
+        }
+      },
+      "system": "MOSAIC-rules",
+      "provider_attempts_during_load": 0
+    },
+    {
+      "concurrency": 8,
+      "mode": "mosaic",
+      "cache": false,
+      "requests": 497,
+      "duration_s": 20.2,
+      "throughput_rps": 24.64,
+      "error_rate": 0.0,
+      "errors": {},
+      "degraded_responses": 0,
+      "use_llm": true,
+      "explain": false,
+      "parser_counts": {
+        "llm+rules": 497
+      },
+      "llm_fallbacks": 0,
+      "latency_ms": {
+        "p50": 313.8,
+        "p95": 473.9,
+        "p99": 550.6,
+        "mean": 322.8,
+        "max": 705.4
+      },
+      "components_ms": {
+        "embedding": {
+          "p50": 24.2,
+          "p95": 67.3,
+          "p99": 94.3
+        },
+        "intent": {
+          "p50": 12.6,
+          "p95": 32.5,
+          "p99": 54.8
+        },
+        "ranking": {
+          "p50": 24.4,
+          "p95": 55.5,
+          "p99": 93.7
+        },
+        "ranking.constraints": {
+          "p50": 0.0,
+          "p95": 0.2,
+          "p99": 0.2
+        },
+        "ranking.explain": {
+          "p50": 0.1,
+          "p95": 0.4,
+          "p99": 0.5
+        },
+        "ranking.fusion": {
+          "p50": 0.7,
+          "p95": 2.5,
+          "p99": 3.6
+        },
+        "ranking.signals": {
+          "p50": 0.4,
+          "p95": 1.9,
+          "p99": 2.8
+        },
+        "retrieval": {
+          "p50": 197.7,
+          "p95": 319.5,
+          "p99": 355.0
+        },
+        "retrieval.bm25": {
+          "p50": 2.8,
+          "p95": 9.8,
+          "p99": 15.7
+        },
+        "retrieval.dense_ann": {
+          "p50": 90.7,
+          "p95": 160.1,
+          "p99": 185.4
+        },
+        "retrieval.fusion": {
+          "p50": 0.6,
+          "p95": 1.6,
+          "p99": 3.3
+        },
+        "retrieval.signal_completion": {
+          "p50": 27.9,
+          "p95": 80.3,
+          "p99": 107.3
+        },
+        "total": {
+          "p50": 268.3,
+          "p95": 414.2,
+          "p99": 500.7
+        }
+      },
+      "system": "MOSAIC-Groq",
+      "provider_attempts_during_load": 0
+    }
+  ]
+}

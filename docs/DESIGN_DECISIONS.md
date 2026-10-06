@@ -3,7 +3,8 @@
 Each entry: **decision → why → trade-off / what would change it.**
 
 Numerical evidence below comes from runs before security commit `29901c6` on
-5 October 2026. Current-version relevance and performance reruns are pending.
+5 October 2026. The current native rules/Groq relevance and performance comparison
+is documented separately in [Full-stack evaluation](LLM_STACK_EVALUATION.md).
 
 ## 1. Problem framing: search is *constraint satisfaction + preference ranking*, not just similarity
 Human queries mix three kinds of information:

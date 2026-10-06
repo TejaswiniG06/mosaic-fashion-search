@@ -90,6 +90,16 @@ The check makes a small number of real API calls using synthetic requests and wr
 `evaluation/reports/llm_live.json`; it does not measure full-stack search quality.
 See [Live LLM verification](LLM_LIVE.md) for results and scope.
 
+For the fully indexed real stack, compare rules against Groq and measure fresh-call
+latency and warm-intent throughput with:
+
+```bash
+PYTHONPATH=libs:. python -m evaluation.evaluate_llm_stack --pace 8 --duration 20
+```
+
+See [Full-stack evaluation](LLM_STACK_EVALUATION.md) for deployment settings,
+provider-quota considerations, results and interpretation.
+
 ## Configure image security
 
 Keep the default Amazon hosts when using Amazon image URLs. To add a trusted CDN,

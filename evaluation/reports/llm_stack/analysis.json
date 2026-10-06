@@ -1,0 +1,80 @@
+{
+  "generated_at": "2026-10-06T11:30:15.128684+00:00",
+  "analysis_source_sha256": "e5e3fb87f9c640d2f2e6e8b7263e73ae86adb52f4f2fdcd3e100d805b8f0407a",
+  "summary_renderer_source_sha256": "a5118fb4a699746f62ff24e97fddd4e54cefc6c0f4921535bec783be7a907969",
+  "relevance_report_sha256": "c2068330bb2a13cab3b056e8419bfc246d68379823281d49415b5144c7502700",
+  "audited_pairs": 120,
+  "hard_constraints_preserved": 120,
+  "warm_requests_without_errors_or_provider_attempts": 2315,
+  "need_clustered_ndcg": {
+    "n_needs": 30,
+    "translations_per_need": 4,
+    "mean_delta_groq_minus_rules": 0.0016121314535721993,
+    "two_sided_permutation_p": 0.7988201179882012
+  },
+  "largest_gains": [
+    {
+      "need": "N08",
+      "language": "ta",
+      "query": "1000 ரூபாய்க்குள் சுற்றுச்சூழலுக்கு உகந்த ஆர்கானிக் காட்டன் டி-ஷர்ட்",
+      "delta_ndcg": 0.45419850853936516
+    },
+    {
+      "need": "N22",
+      "language": "ta",
+      "query": "தங்கையின் சங்கீத்துக்கு லெஹங்கா 20000 ரூபாய்க்குள்",
+      "delta_ndcg": 0.24447894693449945
+    },
+    {
+      "need": "N23",
+      "language": "ta",
+      "query": "நீச்சல் குளத்துக்கு நீச்சல் உடை",
+      "delta_ndcg": 0.18865008539835448
+    },
+    {
+      "need": "N11",
+      "language": "hi",
+      "query": "गोवा छुट्टियों के लिए पुरुषों की लिनन शर्ट",
+      "delta_ndcg": 0.13741007427845187
+    },
+    {
+      "need": "N28",
+      "language": "ta",
+      "query": "பயணத்துக்கு வசதியான பேன்ட்",
+      "delta_ndcg": 0.08058017007621321
+    }
+  ],
+  "largest_losses": [
+    {
+      "need": "N06",
+      "language": "hi",
+      "query": "ऑफिस के लिए पुरुषों की फॉर्मल शर्ट साइज़ L 1500 से कम",
+      "delta_ndcg": -0.20297778989758097
+    },
+    {
+      "need": "N20",
+      "language": "ta",
+      "query": "நீல கட்டம் போட்ட சட்டை",
+      "delta_ndcg": -0.19955072092334036
+    },
+    {
+      "need": "N06",
+      "language": "ta",
+      "query": "ஆபீஸ்க்கு ஆண்கள் ஃபார்மல் சட்டை சைஸ் L 1500 ரூபாய்க்குள்",
+      "delta_ndcg": -0.13307360508379718
+    },
+    {
+      "need": "N07",
+      "language": "hi",
+      "query": "जिम वर्कआउट के लिए आरामदायक कपड़े",
+      "delta_ndcg": -0.13131177718553444
+    },
+    {
+      "need": "N28",
+      "language": "tanglish",
+      "query": "travel ku comfortable pants venum",
+      "delta_ndcg": -0.07421429237333754
+    }
+  ],
+  "scope": "Offline consistency audit. Permutations flip mean differences across 30 needs to keep their four translations together. No independent human relevance judgments."
+}

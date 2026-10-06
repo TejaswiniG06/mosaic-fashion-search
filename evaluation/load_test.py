@@ -29,25 +29,32 @@ def pct(xs: list[float], p: float) -> float | None:
     return round(xs[f] + (xs[c] - xs[f]) * (k - f), 1)
 
 
-async def level(api: str, queries: list[str], conc: int, duration: float, mode: str, cache: bool, seed: int) -> dict:
+async def level(api: str, queries: list[str], conc: int, duration: float, mode: str, cache: bool, seed: int,
+                use_llm: bool = True, explain: bool = True) -> dict:
     rng = random.Random(seed)
     lat: list[float] = []
     comps: dict[str, list[float]] = defaultdict(list)
     errors: dict[str, int] = defaultdict(int)
     degraded = 0
+    parsers: dict[str, int] = defaultdict(int)
+    llm_fallbacks = 0
     stop = time.perf_counter() + duration
     async with httpx.AsyncClient(base_url=api, timeout=30, limits=httpx.Limits(max_connections=conc * 2)) as c:
         async def user():
-            nonlocal degraded
+            nonlocal degraded, llm_fallbacks
             while time.perf_counter() < stop:
                 q = rng.choice(queries)
                 t0 = time.perf_counter()
                 try:
-                    r = await c.post("/search", json={"query": q, "mode": mode, "top_k": 10, "use_cache": cache})
+                    r = await c.post("/search", json={"query": q, "mode": mode, "top_k": 10, "use_cache": cache,
+                                                      "use_llm": use_llm, "explain": explain})
                     dt = (time.perf_counter() - t0) * 1000
                     if r.status_code == 200:
                         lat.append(dt)
                         d = r.json()
+                        intent = d.get("intent") or {}
+                        parsers[intent.get("parser", "none")] += 1
+                        llm_fallbacks += any("llm unavailable" in w for w in intent.get("warnings", []))
                         degraded += bool(d.get("degraded"))
                         for k, v in d["timings_ms"].items():
                             comps[k].append(v)
@@ -63,7 +70,8 @@ async def level(api: str, queries: list[str], conc: int, duration: float, mode: 
     return {
         "concurrency": conc, "mode": mode, "cache": cache, "requests": total, "duration_s": round(wall, 1),
         "throughput_rps": round(len(lat) / wall, 2), "error_rate": round(n_err / total, 4) if total else None, "errors": dict(errors),
-        "degraded_responses": degraded,
+        "degraded_responses": degraded, "use_llm": use_llm, "explain": explain,
+        "parser_counts": dict(parsers), "llm_fallbacks": llm_fallbacks,
         "latency_ms": {"p50": pct(lat, 50), "p95": pct(lat, 95), "p99": pct(lat, 99), "mean": round(statistics.fmean(lat), 1) if lat else None,
                        "max": round(max(lat), 1) if lat else None},
         "components_ms": {k: {"p50": pct(v, 50), "p95": pct(v, 95), "p99": pct(v, 99)} for k, v in sorted(comps.items())},

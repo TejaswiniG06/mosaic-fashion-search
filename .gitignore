@@ -12,6 +12,7 @@ data/amazon_catalogue*.jsonl
 
 .pytest_cache/
 tools/
+.qdrant-initialized
 data/catalogue.db*
 data/qdrant_storage/
 data/qdrant_snapshots/

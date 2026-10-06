@@ -1,9 +1,9 @@
 # Evaluation methodology & results
 
 The relevance, load, freshness, scale and resilience measurements in sections 1–5
-predate security commit `29901c6` on 5 October 2026. They have not been rerun with
-the current image restrictions and LLM safeguards. Section 6 describes security
-verification separately; unit-test success is not a new relevance or load result.
+predate security commit `29901c6` on 5 October 2026. Those historical multi-system
+and scale tables are retained. Section 6 describes security checks, section 7
+provider smoke checks, and section 8 the new full-stack rules/Groq comparison.
 
 The historical measurements were produced by the scripts in `evaluation/` against the running stack; raw per-query rows are in
 `evaluation/reports/*.json`, rendered tables in `evaluation/reports/*.md`. Nothing is hand-entered.
@@ -202,3 +202,32 @@ with a memory cache and synthetic products. The gateway, Redis, catalogue, retri
 and encoder services were not part of this run. It does not update the relevance,
 latency or scale tables above. Earlier failures are retained in the report history.
 See [Live LLM verification](LLM_LIVE.md) for commands, evidence and limitations.
+
+## 8. Native full-stack rules/Groq comparison
+
+The current 5,000-product, 120-query comparison used actual native Windows services,
+SQLite, Redis, Qdrant and real e5/CLIP encoders. All 120 Groq requests returned
+validated `llm+rules` intents with no HTTP errors, fallback or degraded search paths.
+Hard rule constraints were preserved in every pair.
+
+| System | P@10 | NDCG@10 | ConstraintSat@10 | Fresh intent P95 |
+|---|---:|---:|---:|---:|
+| MOSAIC rules | 0.954 | 0.915 | 0.983 | 305 ms |
+| MOSAIC Groq + rules | 0.953 | 0.917 | 0.983 | 3.27 s |
+
+The NDCG difference is +0.0016; a permutation analysis grouped by the 30 needs
+gives p=0.7988. There is no statistically significant overall relevance improvement
+in this synthetic test. Some queries improved, while others worsened.
+
+With accepted intents cached, eight concurrent users achieved 24.64 searches/s
+at 474 ms P95 with Groq versus 27.16 searches/s at 411 ms with rules. The six warm
+load conditions completed 2,315 searches without HTTP errors, degraded responses,
+LLM fallback or new provider attempts. Three separate explanation samples used the
+LLM through the full search path. Ninety unit/model and seven integration tests passed.
+
+Explanations and response caching were disabled in the relevance/load comparisons.
+Fresh provider calls were paced for quota, with that waiting excluded from latency.
+Warm throughput is not uncached provider capacity. This is a short synthetic native
+run, not a real-data, PostgreSQL/Docker or long-duration production validation.
+See [methodology and interpretation](LLM_STACK_EVALUATION.md) and
+[generated results](../evaluation/reports/llm_stack/summary.md).

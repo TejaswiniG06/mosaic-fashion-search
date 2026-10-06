@@ -1,0 +1,637 @@
+{
+  "meta": {
+    "generated_at": "2026-10-05T16:09:17.509668+00:00",
+    "api": "http://127.0.0.1:8000",
+    "base_commit": "04d83900fc6c46e9130c5b2d0812b2699345ab49",
+    "host": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "logical_cpus": 12,
+      "ram_gib": 15.44
+    },
+    "catalogue_size": 5000,
+    "provider": "openai_compat",
+    "model": "openai/gpt-oss-20b",
+    "deployment": "native Windows / SQLite / Redis / Qdrant",
+    "intent_call_spacing_s": 8.0,
+    "response_cache": false,
+    "explanations_in_relevance_and_load": false,
+    "status": {
+      "ready": {
+        "intent": true,
+        "embedding": true,
+        "retrieval": true,
+        "ranking": true,
+        "catalogue": true
+      },
+      "breakers": {
+        "intent": "closed",
+        "embedding": "closed",
+        "retrieval": "closed",
+        "ranking": "closed",
+        "catalogue": "closed"
+      },
+      "catalogue_stats": {
+        "products": 5000,
+        "outbox_pending": 0,
+        "by_category": {
+          "kurta": 305,
+          "t-shirt": 277,
+          "shirt": 270,
+          "dress": 266,
+          "saree": 243,
+          "top": 191,
+          "jeans": 174,
+          "salwar-suit": 170,
+          "juttis": 163,
+          "sweater": 163,
+          "kurti": 157,
+          "shorts": 157,
+          "palazzo": 153,
+          "blazer": 147,
+          "sneakers": 143,
+          "lehenga": 140,
+          "nightwear": 132,
+          "trousers": 131,
+          "scarf": 129,
+          "swimwear": 129,
+          "jacket": 125,
+          "skirt": 125,
+          "coat": 123,
+          "heels": 123,
+          "sherwani": 123,
+          "boots": 119,
+          "hat": 119,
+          "formal-shoes": 117,
+          "veshti": 115,
+          "hoodie": 92,
+          "sandals": 91,
+          "activewear": 88
+        },
+        "backend": "sqlite",
+        "catalogue_version": 5003
+      },
+      "retrieval_stats": {
+        "bm25_docs": 5000,
+        "bm25_terms": 355,
+        "qdrant_points": 5000,
+        "warm": true,
+        "stream_lag": {
+          "pending": 0,
+          "lag": 0
+        }
+      },
+      "intent_stats": {
+        "llm_provider": "openai_compat",
+        "llm_model": "openai/gpt-oss-20b",
+        "languages": [
+          "en",
+          "ta",
+          "tanglish",
+          "hi",
+          "hinglish"
+        ]
+      },
+      "embedding_stats": {
+        "text_model": "e5-small-a75bf7248678",
+        "text_dim": 384,
+        "clip_model": "openclip-vitb32-835b51410287",
+        "clip_dim": 512,
+        "runtime": "onnxruntime-cpu"
+      }
+    },
+    "source_sha256": {
+      "evaluation/evaluate_llm_stack.py": "a814dac7c5e8283c8ca8623dc86f21fafbacd41d198a3406cd043261b170651d",
+      "evaluation/load_test.py": "a06a6c5f80a6690bc60a61db0278359fd743a9939e5a74f651dd10144ff6983c",
+      "services/intent/llm.py": "ca0272506a3a6f222ed1058889a7b73d5b85ff4a6ecf058474a9ca67f762bc69"
+    },
+    "dataset_sha256": {
+      "data/catalogue.jsonl": "de4fbc87175fa12a22b7e87b49fcdb1f90f9542c6872a464af70934365c7c583",
+      "data/ground_truth.jsonl": "a2ba93f34ba11ea018daf1a2cc12327141fa6c4d57fd7ab69f81db219d70221e",
+      "evaluation/queries/needs.jsonl": "c77b9eefbbce01a1e6589e59b844b99e73a35ef0a2b667295818ab6b3f329be4"
+    },
+    "runtime_versions": {
+      "onnxruntime": "1.30.0",
+      "tokenizers": "0.23.2",
+      "numpy": "2.5.3",
+      "qdrant-client": "1.19.1",
+      "redis": "8.1.0",
+      "fastapi": "0.142.2",
+      "httpx": "0.28.1"
+    },
+    "model_sha256": {
+      "e5": "62a3bdc3f493d4c8bcdd076fbd0e0903e31991c00498231e74f1fa44d47712d2",
+      "clip_text": "952c2fc37a290d5b1989f115d764e4741090e3ecdb4e30828780b4396452e63b",
+      "clip_image": "3cca130c74f28d9caa1be4c0610e0fb2b9c698d31117ba418f2b6eba2b5b48c4"
+    }
+  },
+  "cases": [
+    {
+      "lang": "en",
+      "query": "comfortable cotton dress for Chennai summer under 2000",
+      "http_status": 200,
+      "response": {
+        "request_id": "470b5958eb704bd5",
+        "query": "comfortable cotton dress for Chennai summer under 2000",
+        "mode": "mosaic",
+        "intent": {
+          "original_query": "comfortable cotton dress for Chennai summer under 2000",
+          "language": "en",
+          "language_confidence": 0.9,
+          "normalized_query_en": "comfortable cotton dress for Chennai summer under 2000 | cotton dress comfortable breathable summer hot and humid weather chennai",
+          "category": [
+            "dress"
+          ],
+          "category_explicit": true,
+          "occasion": [],
+          "season": "summer",
+          "climate": "hot_humid",
+          "destination": "chennai",
+          "comfort": true,
+          "style": [],
+          "material": [
+            "cotton"
+          ],
+          "colour": [],
+          "pattern": [],
+          "budget_min": null,
+          "budget_max": 2000.0,
+          "size": null,
+          "gender": null,
+          "sustainability": false,
+          "brand": [],
+          "visual_intent": false,
+          "has_query_image": false,
+          "parser": "llm+rules",
+          "confidence": 1.0,
+          "warnings": []
+        },
+        "filters": {
+          "price_min": null,
+          "price_max": 2000.0,
+          "in_stock_only": true,
+          "size": null,
+          "categories": [
+            "dress"
+          ],
+          "gender": null
+        },
+        "constraints_applied": [
+          "price <= 2000",
+          "in stock",
+          "category in [dress]"
+        ],
+        "retrieval_mode": "hybrid+clip_rerank",
+        "weights": {
+          "semantic": 0.258,
+          "lexical": 0.129,
+          "visual": 0.086,
+          "occasion": 0.0,
+          "climate": 0.1958,
+          "material": 0.1703,
+          "comfort": 0.1608
+        },
+        "weight_rationale": [
+          "no query evidence for occasion → weight 0",
+          "climate 'hot_humid' from destination chennai → climate ×2.07",
+          "explicit fabric ['cotton'] → material ×1.8",
+          "comfort requested → comfort ×1.7"
+        ],
+        "results": [
+          {
+            "rank": 1,
+            "parent_asin": "MF0002426",
+            "title": "Northpeak Women's Cotton Printed Midi Dress - Party Wear",
+            "score": 0.8871,
+            "components": {
+              "semantic": 0.8707,
+              "lexical": 0.9067,
+              "visual": 0.6501,
+              "climate": 0.87,
+              "material": 1.0,
+              "comfort": 0.925
+            },
+            "contributions": {
+              "semantic": 0.2247,
+              "lexical": 0.117,
+              "visual": 0.0559,
+              "climate": 0.1704,
+              "material": 0.1703,
+              "comfort": 0.1488
+            },
+            "price": 789.0,
+            "store": "Northpeak",
+            "image": "local://renders/dress__pink__printed.png",
+            "has_image": true,
+            "in_stock": true,
+            "sizes": [
+              "L",
+              "XL"
+            ],
+            "attributes": {
+              "category": "dress",
+              "group": "onepiece",
+              "gender": "women",
+              "materials": [
+                "cotton"
+              ],
+              "colours": [
+                "pink"
+              ],
+              "patterns": [
+                "printed"
+              ],
+              "occasions": [
+                "party",
+                "beach"
+              ],
+              "seasons": [],
+              "comfort_tags": [
+                "lightweight",
+                "soft",
+                "relaxed fit",
+                "breathable"
+              ],
+              "styles": [
+                "ethnic"
+              ],
+              "sustainable": false,
+              "breathability": 0.9,
+              "warmth": 0.3,
+              "material_comfort": 0.85,
+              "rain_ok": false
+            },
+            "constraints_satisfied": [
+              "₹789 within your ₹2,000 budget",
+              "in stock (15 units)",
+              "category dress"
+            ],
+            "explanation": "Why: cotton fabric is breathable (breathability 0.90) for hot and humid weather in Chennai; made of cotton as requested; comfort features: lightweight, soft, relaxed fit. Constraints met: ₹789 within your ₹2,000 budget, in stock (15 units), category dress.",
+            "explanation_source": "llm",
+            "url": null,
+            "rating": 4.5
+          }
+        ],
+        "degraded": [],
+        "timings_ms": {
+          "intent": 10.22,
+          "embedding": 18.38,
+          "retrieval": 77.76,
+          "retrieval.bm25": 10.75,
+          "retrieval.dense_ann": 52.72,
+          "retrieval.fusion": 0.48,
+          "retrieval.signal_completion": 1.75,
+          "ranking": 699.13,
+          "ranking.constraints": 0.05,
+          "ranking.signals": 0.54,
+          "ranking.fusion": 0.79,
+          "ranking.explain": 684.31,
+          "total": 807.1
+        },
+        "filtered_out": {},
+        "index_size": 5000,
+        "cached": false,
+        "catalogue_version": 5003,
+        "suggestions": []
+      }
+    },
+    {
+      "lang": "tanglish",
+      "query": "Chennai summer ku comfortable cotton dress venum under 2000",
+      "http_status": 200,
+      "response": {
+        "request_id": "6e74eacb09a9452a",
+        "query": "Chennai summer ku comfortable cotton dress venum under 2000",
+        "mode": "mosaic",
+        "intent": {
+          "original_query": "Chennai summer ku comfortable cotton dress venum under 2000",
+          "language": "tanglish",
+          "language_confidence": 0.75,
+          "normalized_query_en": "I want a comfortable cotton dress for Chennai summer under 2000 INR. | cotton dress comfortable breathable summer hot and humid weather chennai",
+          "category": [
+            "dress"
+          ],
+          "category_explicit": true,
+          "occasion": [],
+          "season": "summer",
+          "climate": "hot_humid",
+          "destination": "chennai",
+          "comfort": true,
+          "style": [],
+          "material": [
+            "cotton"
+          ],
+          "colour": [],
+          "pattern": [],
+          "budget_min": null,
+          "budget_max": 2000.0,
+          "size": null,
+          "gender": null,
+          "sustainability": false,
+          "brand": [],
+          "visual_intent": false,
+          "has_query_image": false,
+          "parser": "llm+rules",
+          "confidence": 1.0,
+          "warnings": []
+        },
+        "filters": {
+          "price_min": null,
+          "price_max": 2000.0,
+          "in_stock_only": true,
+          "size": null,
+          "categories": [
+            "dress"
+          ],
+          "gender": null
+        },
+        "constraints_applied": [
+          "price <= 2000",
+          "in stock",
+          "category in [dress]"
+        ],
+        "retrieval_mode": "hybrid+clip_rerank",
+        "weights": {
+          "semantic": 0.3006,
+          "lexical": 0.0784,
+          "visual": 0.0871,
+          "occasion": 0.0,
+          "climate": 0.1984,
+          "material": 0.1725,
+          "comfort": 0.1629
+        },
+        "weight_rationale": [
+          "no query evidence for occasion → weight 0",
+          "climate 'hot_humid' from destination chennai → climate ×2.07",
+          "explicit fabric ['cotton'] → material ×1.8",
+          "comfort requested → comfort ×1.7",
+          "tanglish query → lexical ×0.6, semantic ×1.15 (cross-script term overlap unreliable)"
+        ],
+        "results": [
+          {
+            "rank": 1,
+            "parent_asin": "MF0003806",
+            "title": "Silk Route Women's Orange Graphic Print Midi Dress - Beach Wear | Summer Special",
+            "score": 0.9109,
+            "components": {
+              "semantic": 0.7942,
+              "lexical": 0.9842,
+              "climate": 0.97,
+              "material": 1.0,
+              "comfort": 0.925
+            },
+            "contributions": {
+              "semantic": 0.2615,
+              "lexical": 0.0845,
+              "climate": 0.2108,
+              "material": 0.189,
+              "comfort": 0.1651
+            },
+            "price": 849.0,
+            "store": "Silk Route",
+            "image": null,
+            "has_image": false,
+            "in_stock": true,
+            "sizes": [
+              "S",
+              "M",
+              "L"
+            ],
+            "attributes": {
+              "category": "dress",
+              "group": "onepiece",
+              "gender": "women",
+              "materials": [
+                "cotton"
+              ],
+              "colours": [
+                "orange"
+              ],
+              "patterns": [
+                "printed"
+              ],
+              "occasions": [
+                "beach"
+              ],
+              "seasons": [
+                "summer"
+              ],
+              "comfort_tags": [
+                "relaxed fit",
+                "soft",
+                "breathable"
+              ],
+              "styles": [],
+              "sustainable": false,
+              "breathability": 0.9,
+              "warmth": 0.3,
+              "material_comfort": 0.85,
+              "rain_ok": false
+            },
+            "constraints_satisfied": [
+              "₹849 within your ₹2,000 budget",
+              "in stock (206 units)",
+              "category dress"
+            ],
+            "explanation": "Why: cotton fabric is breathable (breathability 0.90) for hot and humid weather in Chennai; made of cotton as requested; comfort features: relaxed fit, soft, breathable. Constraints met: ₹849 within your ₹2,000 budget, in stock (206 units), category dress.",
+            "explanation_source": "llm",
+            "url": null,
+            "rating": 3.3
+          }
+        ],
+        "degraded": [],
+        "timings_ms": {
+          "intent": 261.47,
+          "embedding": 268.88,
+          "retrieval": 286.77,
+          "retrieval.bm25": 5.93,
+          "retrieval.dense_ann": 26.06,
+          "retrieval.fusion": 0.31,
+          "retrieval.signal_completion": 1.04,
+          "ranking": 924.02,
+          "ranking.constraints": 0.03,
+          "ranking.signals": 0.25,
+          "ranking.fusion": 0.4,
+          "ranking.explain": 670.79,
+          "total": 1742.6
+        },
+        "filtered_out": {},
+        "index_size": 5000,
+        "cached": false,
+        "catalogue_version": 5003,
+        "suggestions": []
+      }
+    },
+    {
+      "lang": "ta",
+      "query": "சென்னை கோடைக்கு வசதியான பருத்தி டிரஸ் 2000 ரூபாய்க்குள்",
+      "http_status": 200,
+      "response": {
+        "request_id": "4539b087209244d6",
+        "query": "சென்னை கோடைக்கு வசதியான பருத்தி டிரஸ் 2000 ரூபாய்க்குள்",
+        "mode": "mosaic",
+        "intent": {
+          "original_query": "சென்னை கோடைக்கு வசதியான பருத்தி டிரஸ் 2000 ரூபாய்க்குள்",
+          "language": "ta",
+          "language_confidence": 1.0,
+          "normalized_query_en": "Comfortable cotton dress for summer in Chennai under 2000 rupees | cotton dress comfortable breathable summer hot and humid weather chennai",
+          "category": [
+            "dress"
+          ],
+          "category_explicit": true,
+          "occasion": [],
+          "season": "summer",
+          "climate": "hot_humid",
+          "destination": "chennai",
+          "comfort": true,
+          "style": [],
+          "material": [
+            "cotton"
+          ],
+          "colour": [],
+          "pattern": [],
+          "budget_min": null,
+          "budget_max": 2000.0,
+          "size": null,
+          "gender": null,
+          "sustainability": false,
+          "brand": [],
+          "visual_intent": false,
+          "has_query_image": false,
+          "parser": "llm+rules",
+          "confidence": 1.0,
+          "warnings": []
+        },
+        "filters": {
+          "price_min": null,
+          "price_max": 2000.0,
+          "in_stock_only": true,
+          "size": null,
+          "categories": [
+            "dress"
+          ],
+          "gender": null
+        },
+        "constraints_applied": [
+          "price <= 2000",
+          "in stock",
+          "category in [dress]"
+        ],
+        "retrieval_mode": "hybrid+clip_rerank",
+        "weights": {
+          "semantic": 0.3006,
+          "lexical": 0.0784,
+          "visual": 0.0871,
+          "occasion": 0.0,
+          "climate": 0.1984,
+          "material": 0.1725,
+          "comfort": 0.1629
+        },
+        "weight_rationale": [
+          "no query evidence for occasion → weight 0",
+          "climate 'hot_humid' from destination chennai → climate ×2.07",
+          "explicit fabric ['cotton'] → material ×1.8",
+          "comfort requested → comfort ×1.7",
+          "ta query → lexical ×0.6, semantic ×1.15 (cross-script term overlap unreliable)"
+        ],
+        "results": [
+          {
+            "rank": 1,
+            "parent_asin": "MF0003764",
+            "title": "Vastra House Women's Pure Cotton Floral Print Oversized Maxi Dress",
+            "score": 0.9087,
+            "components": {
+              "semantic": 0.9889,
+              "lexical": 0.7312,
+              "visual": 0.6686,
+              "climate": 0.87,
+              "material": 1.0,
+              "comfort": 0.925
+            },
+            "contributions": {
+              "semantic": 0.2973,
+              "lexical": 0.0573,
+              "visual": 0.0583,
+              "climate": 0.1726,
+              "material": 0.1725,
+              "comfort": 0.1507
+            },
+            "price": 1789.0,
+            "store": "Vastra House",
+            "image": "local://renders/dress__black__floral.png",
+            "has_image": true,
+            "in_stock": true,
+            "sizes": [
+              "S",
+              "M",
+              "L",
+              "XL",
+              "XXL"
+            ],
+            "attributes": {
+              "category": "dress",
+              "group": "onepiece",
+              "gender": "women",
+              "materials": [
+                "cotton"
+              ],
+              "colours": [
+                "black"
+              ],
+              "patterns": [
+                "floral",
+                "printed"
+              ],
+              "occasions": [
+                "beach"
+              ],
+              "seasons": [],
+              "comfort_tags": [
+                "relaxed fit",
+                "soft",
+                "breathable"
+              ],
+              "styles": [
+                "trendy"
+              ],
+              "sustainable": false,
+              "breathability": 0.9,
+              "warmth": 0.3,
+              "material_comfort": 0.85,
+              "rain_ok": false
+            },
+            "constraints_satisfied": [
+              "₹1,789 within your ₹2,000 budget",
+              "in stock (135 units)",
+              "category dress"
+            ],
+            "explanation": "Why: cotton fabric is breathable (breathability 0.90) for hot and humid weather in Chennai; made of cotton as requested; comfort features: relaxed fit, soft, breathable. Constraints met: ₹1,789 within your ₹2,000 budget, in stock (135 units), category dress.",
+            "explanation_source": "llm",
+            "url": null,
+            "rating": 3.2
+          }
+        ],
+        "degraded": [],
+        "timings_ms": {
+          "intent": 264.58,
+          "embedding": 268.83,
+          "retrieval": 329.95,
+          "retrieval.bm25": 11.66,
+          "retrieval.dense_ann": 42.62,
+          "retrieval.fusion": 0.38,
+          "retrieval.signal_completion": 1.23,
+          "ranking": 909.9,
+          "ranking.constraints": 0.06,
+          "ranking.signals": 0.6,
+          "ranking.fusion": 0.97,
+          "ranking.explain": 658.59,
+          "total": 1774.71
+        },
+        "filtered_out": {},
+        "index_size": 5000,
+        "cached": false,
+        "catalogue_version": 5003,
+        "suggestions": []
+      }
+    }
+  ]
+}

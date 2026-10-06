@@ -45,28 +45,25 @@ See [Architecture](docs/ARCHITECTURE.md), [Design decisions](docs/DESIGN_DECISIO
 
 ## What the evaluation shows
 
-**Historical baseline:** 5,000 synthetic products, 30 information needs translated into four
-languages (120 queries). These measurements predate security commit `29901c6`; current-version
-relevance and performance reruns are pending. Synthetic labels share a vocabulary with the system,
-so the scores do not establish real-world quality.
+**Current full-stack comparison:** 5,000 synthetic products and 120 queries across English,
+Tamil, Tanglish and Hindi, using real services and Groq `openai/gpt-oss-20b` on native Windows
+with SQLite, Redis and Qdrant. Synthetic labels share the system's vocabulary, so these scores
+do not establish real-world quality.
 
 | System | Relevant items in top 10 (P@10) | Ranking quality (NDCG@10) | Constraints satisfied |
 |---|---:|---:|---:|
-| BM25 keyword search | 0.346 | 0.306 | 0.361 |
-| Dense semantic search | 0.378 | 0.331 | 0.438 |
-| Hybrid retrieval | 0.471 | 0.412 | 0.521 |
-| Hybrid + intent filters | 0.932 | 0.840 | 0.983 |
-| **MOSAIC** | **0.954** | **0.916** | **0.983** |
+| MOSAIC, rules only | 0.954 | 0.915 | 0.983 |
+| MOSAIC, Groq + rules | 0.953 | 0.917 | 0.983 |
 
 Higher is better. P@10 measures relevant results; NDCG rewards placing the most relevant results first.
 
-- **The largest gain came from understanding intent and enforcing constraints.** Hybrid + filters is the useful comparison for judging the extra ranking logic.
-- **Context and visual ranking improved ordering.** Adaptive weights alone added 0.013 NDCG@10 over fixed weights; the gain is modest.
-- **The original native run reached roughly 22 searches/s on 2 vCPU.** At 100K products, single-user P95 latency was 248 ms; in-memory BM25 became the scaling bottleneck.
-- **Current verification:** 44 focused security/ranking tests passed. [Live Groq smoke checks](docs/LLM_LIVE.md) passed 14/14 checks, including five languages, constraint preservation, approved explanations and fallback. Full-stack LLM relevance and live CDN validation remain pending.
+- **Groq worked, but did not show a significant overall relevance gain.** All 120 requests used validated LLM intents. Some Tamil queries improved, while other queries worsened; keep the LLM optional.
+- **Fresh LLM calls add latency:** end-to-end P95 was 3.27 s with Groq versus 305 ms with rules. With cached intents and eight concurrent users, Groq reached 24.64 searches/s at 474 ms P95, with no new provider calls. Response caching was off.
+- **Verification:** 90 unit/model tests and seven live integration tests passed. The warm load test completed 2,315 searches without HTTP errors, degraded responses or LLM fallbacks. Earlier [provider/security smoke checks](docs/LLM_LIVE.md) cover five languages and instruction-like inputs.
 
-Full results, ablations and caveats: [Evaluation](docs/EVALUATION.md). Growth measurements and
-proposed deployment: [Scaling](docs/SCALING.md).
+[Current results and methodology](docs/LLM_STACK_EVALUATION.md). Earlier BM25/Dense/Hybrid
+comparisons and ablations remain labelled historical in [Evaluation](docs/EVALUATION.md);
+growth measurements and proposed deployment are in [Scaling](docs/SCALING.md).
 
 ## Try it
 
@@ -102,7 +99,7 @@ Earlier UI captures illustrate the interface; they predate the security changes 
 ## What needs improvement
 
 The main priorities are independent human judgments on real products, broader multilingual
-parsing (including negation and ambiguous categories), provider-backed relevance evaluation, live CDN/Docker validation, and
+parsing (including negation and ambiguous categories), provider-backed real-data evaluation, live CDN/Docker validation, and
 stronger event recovery and cache/index consistency. The system still uses one admin key and
 needs deployment authentication, TLS and shared rate limits before public exposure.
 

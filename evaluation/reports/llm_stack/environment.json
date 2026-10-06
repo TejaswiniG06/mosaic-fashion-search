@@ -1,0 +1,30 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "redis_version": "5.0.14.1",
+  "qdrant": {
+    "title": "qdrant - vector search engine",
+    "version": "1.19.0",
+    "commit": "74f3e85b9473c62560006c043e13737ce6b48412"
+  },
+  "additional_packages": {
+    "truststore": "0.10.4",
+    "torch": "2.14.1+cpu",
+    "open-clip-torch": "3.3.0",
+    "onnx": "1.23.1"
+  },
+  "deployment": "native Windows, SQLite catalogue, Redis/Qdrant servers, real e5/CLIP ONNX CPU models",
+  "indexing_seconds": 367.9,
+  "test_results": {
+    "unit_passed": 90,
+    "integration_passed": 7,
+    "skipped": 0
+  },
+  "clip_export_cosine": 1.0,
+  "notes": [
+    "All services bound to localhost; evaluation overrides RATE_LIMIT_RPS=0 and LLM_EXPLANATIONS=true in process environments, leaving the local .env unchanged.",
+    "Fresh Groq calls spaced 8 seconds apart after observing 8000 tokens/minute and 1000 requests/day headers.",
+    "No response caching or LLM explanation calls in relevance and throughput comparisons."
+  ],
+  "products_with_image_vectors": 4668
+}
